@@ -353,23 +353,24 @@ class RevaController extends Controller {
 		$result = [];
 		foreach ($trashItems as $node) {
 			if (preg_match("/^sciencemesh/", $node->getOriginalLocation())) {
-				$result[] = [
-				    'mimetype' => $node->getMimetype(),
-				    'path' => preg_replace("/^sciencemesh/", "", $node->getOriginalLocation()),
-				    'size' => $node->getSize(),
-				    'basename' => basename($node->getPath()),
-				    'timestamp' => $node->getMTime(),
-				    'deleted' => $node->getDeletedTime(),
-				    'type' => $node->getType(),
-				    // @FIXME: Use $node->getPermissions() to set private or public
-				    //         as soon as we figure out what Nextcloud permissions mean in this context
-				    'visibility' => 'public',
-				    /*/
-				    'CreationTime' => $node->getCreationTime(),
-				    'Etag' => $node->getEtag(),
-				    'Owner' => $node->getOwner(),
-				    /*/
-				];
+				$result =	[
+										[
+											"opaque" => [
+													"map" => NULL,
+											],
+											"key" => "some-deleted-version",
+											"ref"	=> [
+												"resource_id" => [
+														"map" => NULL,
+												],
+												"path" => "/subdir"
+											],
+											"size" => 12345,
+											"deletion_time" => [
+													"seconds" => 1234567890
+											]
+										]
+									];
 			}
 		}
 		return new JSONResponse($result, 200);
@@ -424,12 +425,13 @@ class RevaController extends Controller {
 
 		foreach ($trashItems as $node) {
 			if (preg_match("/^sciencemesh/", $node->getOriginalLocation())) {
-				// $nodePath = preg_replace("/^sciencemesh/", "", $node->getOriginalLocation());
-				// error_log("replaced " . $nodePath . " from " . $node->getOriginalLocation());
-				if ($path == $node->getOriginalLocation()) {
+					//$nodePath = preg_replace("/^sciencemesh/", "", $node->getOriginalLocation());
+
 					$this->trashManager->restoreItem($node);
-					return new JSONResponse("OK", 200);
-				}
+					// if ($path == $node->getOriginalLocation()) {
+					// 	$this->trashManager->restoreItem($node);
+					// 	return new JSONResponse("OK", 200);
+					// }
 			}
 		}
 		return new JSONResponse('["error" => "Not found."]', 404);
