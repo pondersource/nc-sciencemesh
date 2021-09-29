@@ -20,6 +20,7 @@ use OCP\Files\SimpleFS\ISimpleRoot;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\TextPlainResponse;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Controller;
 
@@ -266,11 +267,10 @@ class RevaController extends Controller {
 	 */
 	public function GetPathByID($userId) {
 		// in progress
-		$path = "subdir/";
-		error_log('GetPathByID: '.$path);
+		$response = "/subdir";
 		$storageId = $this->request->getParam("storage_id");
 		$opaqueId = $this->request->getParam("opaque_id");
-		return new JSONResponse($path, 200);
+		return new TextPlainResponse($response, 200);
 	}
 
 	/**
