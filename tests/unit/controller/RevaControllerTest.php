@@ -29,7 +29,8 @@ class RevaControllerTest extends PHPUnit_Framework_TestCase {
 		["sciencemesh/test", true],
 		["sciencemesh/test.json", true],
 		["sciencemesh/some/path", true],
-		["sciencemesh", true]
+		["sciencemesh", true],
+		['sciencemesh/emptyFolder', true],
 	];
 
 	public function setUp() {
@@ -493,10 +494,6 @@ class RevaControllerTest extends PHPUnit_Framework_TestCase {
 				"path" => "/not/found"
 			]);
 
-		$paramsMap = [
-			["sciencemesh",$this->sciencemeshFolder],
-			["/not/found", NULL]
-		];
 		$this->sciencemeshFolder->method("getDirectoryListing")
 			->willReturn(false);
 		$controller = new RevaController(
@@ -504,13 +501,33 @@ class RevaControllerTest extends PHPUnit_Framework_TestCase {
 			$this->userManager, $this->urlGenerator, $this->userId, $this->config,
 			$this->userService, $this->trashManager
 		);
-		$this->userFolder->method("get")
-			->will($this->returnValueMap($paramsMap));
-		$this->userFolder->method('nodeExists')
-			->willReturn(false);
 		$result = $controller->ListFolder($this->userId);
 		$this->assertEquals($result->getStatus(), 404);
 	}
+
+
+		public function testListFolderEmpty(){
+			$this->request->method("getParam")
+				->with(($this->equalTo("ref")))
+				->willReturn([
+					"resource_id" => [
+						"storage_id" => "storage-id",
+						"opaque_id" => "opaque-id"
+					],
+					"path" => "/emptyFolder"
+				]);
+
+			$this->sciencemeshFolder->method("getDirectoryListing")
+				->willReturn(false);
+			$controller = new RevaController(
+				$this->appName, $this->rootFolder, $this->request, $this->session,
+				$this->userManager, $this->urlGenerator, $this->userId, $this->config,
+				$this->userService, $this->trashManager
+			);
+
+			$result = $controller->ListFolder($this->userId);
+			$this->assertEquals($result->getStatus(), 200);
+		}
 
 	public function testListFolderOther(){
 		$testFolder = $this->getMockBuilder("OCP\Files\Folder")->getMock();

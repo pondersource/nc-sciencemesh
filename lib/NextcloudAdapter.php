@@ -208,9 +208,7 @@ class NextcloudAdapter implements AdapterInterface
         } catch (\OCP\Files\NotFoundException $exception) {
             return [];
         }
-        error_log("checking getDirectoryListing " . $directory);
         if (method_exists($node, 'getDirectoryListing')) {
-            error_log("methd exists on node");
             $nodes = $node->getDirectoryListing();
             $result = array_map(function (\OCP\Files\Node $node) {
                 return $this->normalizeNodeInfo($node);
