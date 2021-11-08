@@ -34,6 +34,26 @@ use OCP\Share\IShare;
 
 class ShareAPIHelper {
 	public function createShare(IShare $share, string $shareWith, int $permissions, $expireDate) {
-		error_log('to do: make rest call to grpc client '. $shareWith);
+		error_log('making rest call to grpc client '. $shareWith);
+		// try {
+			$client = $this->clientService->newClient();
+			$response = $client->post(
+				'http://localhost:19000',
+				[
+					'timeout' => 10,
+					'connect_timeout' => 3,
+					'body' => [
+						'loginType' => 'basic',
+						'loginUsername' => 'einstein',
+						'loginPassword' => 'relativity',
+						'path' => '/home',
+						'recipientUsername' => 'marie',
+						'recipientHost' => 'localhost:17000'
+					]
+				]
+			);
+		// } catch (Error $e) {
+		// 	// ...
+		// }
 	}
 }
