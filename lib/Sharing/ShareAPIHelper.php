@@ -38,7 +38,7 @@ class ShareAPIHelper {
 		// try {
 			$client = $this->clientService->newClient();
 			$response = $client->post(
-				'http://localhost:19000',
+				'https://revanc1.docker/ocm/send',
 				[
 					'timeout' => 10,
 					'connect_timeout' => 3,
