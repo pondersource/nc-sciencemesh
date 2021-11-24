@@ -2,11 +2,10 @@
 
 namespace OCA\ScienceMesh\TokenHandler;
 
-
 use OCP\Security\ISecureRandom;
 
 class SciencemeshToken {
-    public const TOKEN_LENGTH = 15;
+	public const TOKEN_LENGTH = 15;
 
 	/** @var ISecureRandom */
 	private $secureRandom;
