@@ -104,8 +104,6 @@
             url: baseUrl + "/ajax/check_connection_settings",
             contentType: 'application/json',
             data: {
-                sciencemesh_loopback_shared_secret: sciencemesh_loopback_shared_secret,
-                sciencemesh_shared_secret: sciencemesh_shared_secret,
                 sciencemesh_iop_url: sciencemesh_iop_url
             },
             success: function onSuccess(response) {
@@ -113,8 +111,8 @@
                 if (response) {
                     var message =
                         response.error
-                            ? (t(OCA.ScienceMesh.AppName, "Error when trying to update the settings") + " (" + response.error + ")")
-                            : t(OCA.ScienceMesh.AppName, "Settings have been successfully updated");
+                            ? (t(OCA.ScienceMesh.AppName, "Connection lost") + " (" + response.error + ")")
+                            : t(OCA.ScienceMesh.AppName, "Connection is available");
 
                     var versionMessage = response.version ? (" (" + t(OCA.ScienceMesh.AppName, "version") + " " + response.version + ")") : "";
 
