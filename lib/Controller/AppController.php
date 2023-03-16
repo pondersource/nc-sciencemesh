@@ -122,7 +122,9 @@ class AppController extends Controller {
 		$tokenStr = $invitationsData["invite_token"]["token"];
 		$iopUrl = $invitationsData["invite_token"]["user_id"]["idp"];
 		$iopDomain =  parse_url($iopUrl)["host"];
+		// $meshDirectoryUrl = "https://sciencemesh.cesnet.cz/iop/meshdir/";
 		$meshDirectoryUrl = $this->config->getAppValue('sciencemesh', 'meshDirectoryUrl', 'https://sciencemesh.cesnet.cz/iop/meshdir/');
+
 		return new TextPlainResponse("$meshDirectoryUrl?token=$tokenStr&providerDomain=$iopDomain", Http::STATUS_OK);
 	}
 
@@ -155,7 +157,4 @@ class AppController extends Controller {
 		$find_users = $this->httpClient->findAcceptedUsers($this->userId);
 		return new TextPlainResponse($find_users, Http::STATUS_OK);
 	}
-	
-	
-	
 }
