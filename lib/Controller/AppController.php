@@ -10,6 +10,7 @@ use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\TextPlainResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
@@ -17,6 +18,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\IUserSession;
 use OCA\ScienceMesh\RevaHttpClient;
+use OCA\ScienceMesh\Plugins\ScienceMeshGenerateTokenPlugin;
+use OCA\ScienceMesh\Plugins\ScienceMeshAcceptTokenPlugin;
 
 class AppController extends Controller {
 	private $userId;
@@ -120,7 +123,7 @@ class AppController extends Controller {
 		$iopUrl = $invitationsData["invite_token"]["user_id"]["idp"];
 		$iopDomain =  parse_url($iopUrl)["host"];
 		$meshDirectoryUrl = $this->config->getAppValue('sciencemesh', 'meshDirectoryUrl', 'https://sciencemesh.cesnet.cz/iop/meshdir/');
-		return new PlainResponse("$meshDirectoryUrl?token=$tokenStr&providerDomain=$iopDomain", Http::STATUS_OK);
+		return new TextPlainResponse("$meshDirectoryUrl?token=$tokenStr&providerDomain=$iopDomain", Http::STATUS_OK);
 	}
 
 	/**
@@ -141,7 +144,7 @@ class AppController extends Controller {
 		$providerDomain = $this->request->getParam('providerDomain');
 		$token = $this->request->getParam('token');
 		$contacts = $this->httpClient->getAcceptTokenFromReva($providerDomain, $token, $this->userId);
-		return new PlainResponse($contacts, Http::STATUS_OK);
+		return new TextPlainResponse($contacts, Http::STATUS_OK);
 	}
 
 	/**
@@ -150,6 +153,9 @@ class AppController extends Controller {
 	 */
 	public function contactsFindUsers() {
 		$find_users = $this->httpClient->findAcceptedUsers($this->userId);
-		return new PlainResponse($find_users, Http::STATUS_OK);
+		return new TextPlainResponse($find_users, Http::STATUS_OK);
 	}
+	
+	
+	
 }
