@@ -2,7 +2,7 @@
    padding: 10px 40px;
 }
 #hello {
-	color: red;
+	color: var(--color-error);
 }
 
 /*
@@ -39,13 +39,13 @@
    text-align: center;
    padding-top: 5px;
    border-radius: 100%;
-   color: white;
+   color: var(--color-primary-element-text);
    font-size: large;
-   background: rgb(31, 72, 96);
+   background: var(--color-placeholder-light);
 }
 
 .token-added:hover{
-   background: rgb(93, 116, 130);
+   background: var(--color-background-hover);
 }
 
 .app-content-list-item-line-one{
@@ -67,13 +67,13 @@
 }
 
 #token-generator{
-   color: white;
+   color: var(--color-primary-element-text);
    cursor: pointer;
    width: auto;
    height: 36px;
    border-radius: 0.2em;
    border: 0;
-   background-color: rgb(31, 72, 96);
+   background-color: var(--color-primary-default);
    font-size: medium;
    padding: 5px 15px 0px 5px;
    display: flex;
@@ -81,7 +81,7 @@
 
 
 #token-generator:hover {
-   background-color: rgb(57, 142, 192);
+   background-color: var(--color-primary-element-default-hover);
 }
 
 
@@ -128,13 +128,13 @@
 
 .message-token{
    margin:0px;
-   color: green;
+   color: var(--color-success);
    padding:5px;
    width: 180px;
    font-size: 12px;
    padding:5px 6px;
    height:36px;
-   border-radius: 5px;
+   border-radius: 0.2em !important;
    margin: 2.5px 5px;
 }
 
@@ -150,8 +150,8 @@
 
 .token-btn-verification{
    display:block;
-   background: green;
-   color:white;
+   background: var(--color-success);
+   color:var(--color-primary-element-text);
    padding:5px;
    font-weight: bold;
 }
@@ -173,9 +173,9 @@
 
 #test_error{
    padding: 5px;
-   border: 1px dashed;
+   border: 1px dashed darkgreen;
+   margin: 10px auto;
    border-radius: 4px;
-   margin: 10px 10px;
    text-align: center;
 }
 
@@ -188,7 +188,7 @@
    width: 20px;
    height: 20px;
    margin: 10px;
-   color: white;
+   color: var(--color-primary-element-text);
    font-size: large;
    text-align: center;
    border-radius: 100%;
@@ -216,7 +216,7 @@
 
 
 .text-success{
-   color: green !important;
+   color: var(--color-success) !important;
 }
 
 
@@ -244,7 +244,7 @@
  }
  
 .contacts-table thead tr td{
-   background-color: #ccd2d9;
+   background-color: var(--color-placeholder-light);
    padding: 2.5px;
 }
 .contacts-table tbody tr td:first-child{
@@ -267,11 +267,11 @@
 }
 .contacts-table tbody tr td:nth-child(2){
    width: 20% !important;
-   border-bottom: 1px solid #ececec;
+   border-bottom: 1px solid var(--color-placeholder-light);
 }
 .contacts-table tbody tr td:nth-child(3){
    width: 45% !important;
-   border-bottom: 1px solid #ececec;
+   border-bottom: 1px solid var(--color-placeholder-light);
 }
 .contacts-profile-img{
    height: 35px;
@@ -283,7 +283,7 @@
 }
 
 .contacts-table tbody tr:hover{
-   background-color: #00000000;
+   background-color: var(--color-background-hover);
 }
 
 .contacts-table tbody tr{
@@ -341,7 +341,7 @@
 .share-select {
    font-size: 16px;
    padding: 5px;
-   border: 1px solid #ccc;
+   border: 1px solid var(--color-placeholder-light);
    border-radius: 4px;
    -webkit-appearance: none;
    -moz-appearance: none;
@@ -363,7 +363,7 @@
 
 #sciencemesh_setting_submit_btn{
    float: right;
-   margin: 5px 60px;
+   margin: 5px 25px;
    width: 143.4px;
 }
 #share-token-btn{
