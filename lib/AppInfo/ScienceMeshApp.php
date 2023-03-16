@@ -3,7 +3,9 @@
 namespace OCA\ScienceMesh\AppInfo;
 
 use OCP\AppFramework\App;
+use OCA\ScienceMesh\Plugins\ScienceMeshSearchPlugin;
 use OCA\ScienceMesh\ShareProvider\ScienceMeshShareProvider;
+use OCA\ScienceMesh\Notifier\ScienceMeshNotifier;
 
 
 class ScienceMeshApp extends App {
@@ -21,6 +23,14 @@ class ScienceMeshApp extends App {
 				$c->query('UserSession')
 			);
 		});
+		
+		$collaboration = $container->get('OCP\Collaboration\Collaborators\ISearch');
+		$collaboration->registerPlugin(['shareType' => 'SHARE_TYPE_REMOTE', 'class' => ScienceMeshSearchPlugin::class]);
+
+		$shareManager = $container->get('OCP\Share\IManager');
+		$shareManager->registerShareProvider(ScienceMeshShareProvider::class);
+		$notificationManager->registerNotifierService(ScienceMeshNotifier::class);
+		
 		$container->registerService('UserSession', function ($c) {
 			return $c->query('ServerContainer')->getUserSession();
 		});
