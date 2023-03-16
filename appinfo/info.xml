@@ -4,6 +4,7 @@
     <name>ScienceMesh</name>
     <summary>Connect your ownCloud-10 instance to your Reva instance and the Science Mesh</summary>
     <description>Connect your ownCloud-10 instance to your Reva instance and the Science Mesh</description>
+    <version>0.1.0</version>
     <licence>mit</licence>
     <author homepage="https://sciencemesh.io" >ScienceMesh Community</author>
     <author mail="support@pondersource.com" homepage="https://pondersource.com" >Stichting Ponder Source</author>
@@ -14,7 +15,6 @@
     <author>Benz Schenk (Ponder Source)</author>
     <author>Ismoil Shifoev (Ponder Source)</author>
     <author>Ben Peachey (Muze)</author>
-    <version>0.1.0</version>
     <namespace>ScienceMesh</namespace>
     <category>integration</category>
     <bugs>https://github.com/pondersource/nc-sciencemesh/issues</bugs>
