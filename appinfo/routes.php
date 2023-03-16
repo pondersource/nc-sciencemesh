@@ -30,18 +30,19 @@ $application->registerRoutes($this,
         ['name' => 'reva#UnsetArbitraryMetadata', 'url' => '/~{userId}/api/storage/UnsetArbitraryMetadata', 'verb' => 'POST'],
         ['name' => 'reva#UpdateGrant', 'url' => '/~{userId}/api/storage/UpdateGrant', 'verb' => 'POST'],
         ['name' => 'reva#Upload', 'url' => '/~{userId}/api/storage/Upload/{path}', 'verb' => 'PUT'],
-        ['name' => 'reva#addSentShare', 'url' => '/~{userId}/api/ocm/addSentShare', 'verb' => 'POST'],
-        ['name' => 'reva#addReceivedShare', 'url' => '/~{userId}/api/ocm/addReceivedShare', 'verb' => 'POST'],
-        ['name' => 'reva#GetSentShare', 'url' => '/~{userId}/api/ocm/GetSentShare', 'verb' => 'POST'],
-        ['name' => 'reva#Unshare', 'url' => '/~{userId}/api/ocm/Unshare', 'verb' => 'POST'],
-        ['name' => 'reva#UpdateShare', 'url' => '/~{userId}/api/ocm/UpdateShare', 'verb' => 'POST'],
-        ['name' => 'reva#ListSentShares', 'url' => '/~{userId}/api/ocm/ListSentShares', 'verb' => 'POST'],
-        ['name' => 'reva#ListShares', 'url' => '/~{userId}/api/ocm/ListShares', 'verb' => 'POST'], // alias for ListSentShares
-        ['name' => 'reva#ListreceivedShares', 'url' => '/~{userId}/api/ocm/ListReceivedShares', 'verb' => 'POST'],
-        ['name' => 'reva#GetReceivedShare', 'url' => '/~{userId}/api/ocm/GetReceivedShare', 'verb' => 'POST'],
-        ['name' => 'reva#UpdateSentShare', 'url' => '/~{userId}/api/ocm/UpdateSentShare', 'verb' => 'POST'],
-        ['name' => 'reva#UpdateReceivedShare', 'url' => '/~{userId}/api/ocm/UpdateReceivedShare', 'verb' => 'POST'],
-        ['name' => 'reva#GetUser', 'url' => '/~{dummy}/api/user/GetUser', 'verb' => 'POST'],
+
+        ['name' => 'ocm#addSentShare', 'url' => '/~{userId}/api/ocm/addSentShare', 'verb' => 'POST'],
+        ['name' => 'ocm#addReceivedShare', 'url' => '/~{userId}/api/ocm/addReceivedShare', 'verb' => 'POST'],
+        ['name' => 'ocm#GetSentShare', 'url' => '/~{userId}/api/ocm/GetSentShare', 'verb' => 'POST'],
+        ['name' => 'ocm#Unshare', 'url' => '/~{userId}/api/ocm/Unshare', 'verb' => 'POST'],
+        ['name' => 'ocm#UpdateShare', 'url' => '/~{userId}/api/ocm/UpdateShare', 'verb' => 'POST'],
+        ['name' => 'ocm#ListSentShares', 'url' => '/~{userId}/api/ocm/ListSentShares', 'verb' => 'POST'],
+        ['name' => 'ocm#ListShares', 'url' => '/~{userId}/api/ocm/ListShares', 'verb' => 'POST'], // alias for ListSentShares
+        ['name' => 'ocm#ListreceivedShares', 'url' => '/~{userId}/api/ocm/ListReceivedShares', 'verb' => 'POST'],
+        ['name' => 'ocm#GetReceivedShare', 'url' => '/~{userId}/api/ocm/GetReceivedShare', 'verb' => 'POST'],
+        ['name' => 'ocm#UpdateSentShare', 'url' => '/~{userId}/api/ocm/UpdateSentShare', 'verb' => 'POST'],
+        ['name' => 'ocm#UpdateReceivedShare', 'url' => '/~{userId}/api/ocm/UpdateReceivedShare', 'verb' => 'POST'],
+        ['name' => 'ocm#GetUser', 'url' => '/~{dummy}/api/user/GetUser', 'verb' => 'POST'],
         /*
         ['name' => 'storage#createHome', 'url' => '/~{userId}/CreateHome', 'verb' => 'POST'],
         ['name' => 'storage#listFolder', 'url' => '/~{userId}/ListFolder', 'verb' => 'POST'],
@@ -62,7 +63,6 @@ $application->registerRoutes($this,
         ['name' => 'app#accept', 'url' => '/accept', 'verb' => 'GET'],
         ['name' => 'app#contacts', 'url' => '/contacts', 'verb' => 'GET'],
         ['name' => 'app#settings', 'url' => '/settings', 'verb' => 'GET'],
-
         ['name' => 'app#invitationsGenerate', 'url' => '/invitations/generate', 'verb' => 'GET'],
         ['name' => 'app#contactsAccept', 'url' => '/contacts/accept', 'verb' => 'POST'],
         ['name' => 'app#contactsFindUsers', 'url' => '/contacts/users', 'verb' => 'GET'],
@@ -72,12 +72,8 @@ $application->registerRoutes($this,
 
         ["name" => "settings#save_settings", "url" => "/ajax/settings/address", "verb" => "PUT"],
         ["name" => "settings#get_settings", "url" => "/ajax/settings", "verb" => "GET"],
-
         ["name" => "settings#get_sciencemesh_settings", "url" => "/sciencemesh_settings", "verb" => "GET"],
         ["name" => "settings#save_sciencemesh_settings", "url" => "/ajax/sciencemesh_settings/save", "verb" => "GET"],
         ["name" => "settings#check_connection_settings", "url" => "/ajax/check_connection_settings", "verb" => "GET"]
     ]]
 );
-
-
-
