@@ -1,12 +1,20 @@
 <?php
+/**
+ * Create your routes in here. The name is the lowercase name of the controller
+ * without the controller part, the stuff after the hash is the method.
+ * e.g. page#index -> OCA\ScienceMesh\Controller\PageController->index()
+ *
+ * The controller class has to be registered in the application.php file since
+ * it's instantiated in there
+ */
+
 namespace OCA\MyApp\AppInfo;
 
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
 
-$application = new ScienceMeshApp();
-$application->registerRoutes($this,
-    ['routes' => [
-
+$routes_array = [
+    'routes' => [
+        // reva routes
         ['name' => 'reva#Authenticate', 'url' => '/~{userId}/api/auth/Authenticate', 'verb' => 'POST'],
         ['name' => 'reva#AddGrant', 'url' => '/~{userId}/api/storage/AddGrant', 'verb' => 'POST'],
         ['name' => 'reva#CreateDir', 'url' => '/~{userId}/api/storage/CreateDir', 'verb' => 'POST'],
@@ -31,6 +39,7 @@ $application->registerRoutes($this,
         ['name' => 'reva#UpdateGrant', 'url' => '/~{userId}/api/storage/UpdateGrant', 'verb' => 'POST'],
         ['name' => 'reva#Upload', 'url' => '/~{userId}/api/storage/Upload/{path}', 'verb' => 'PUT'],
 
+        // OCM routes
         ['name' => 'ocm#addSentShare', 'url' => '/~{userId}/api/ocm/addSentShare', 'verb' => 'POST'],
         ['name' => 'ocm#addReceivedShare', 'url' => '/~{userId}/api/ocm/addReceivedShare', 'verb' => 'POST'],
         ['name' => 'ocm#GetSentShare', 'url' => '/~{userId}/api/ocm/GetSentShare', 'verb' => 'POST'],
@@ -38,11 +47,12 @@ $application->registerRoutes($this,
         ['name' => 'ocm#UpdateShare', 'url' => '/~{userId}/api/ocm/UpdateShare', 'verb' => 'POST'],
         ['name' => 'ocm#ListSentShares', 'url' => '/~{userId}/api/ocm/ListSentShares', 'verb' => 'POST'],
         ['name' => 'ocm#ListShares', 'url' => '/~{userId}/api/ocm/ListShares', 'verb' => 'POST'], // alias for ListSentShares
-        ['name' => 'ocm#ListreceivedShares', 'url' => '/~{userId}/api/ocm/ListReceivedShares', 'verb' => 'POST'],
+        ['name' => 'ocm#ListReceivedShares', 'url' => '/~{userId}/api/ocm/ListReceivedShares', 'verb' => 'POST'],
         ['name' => 'ocm#GetReceivedShare', 'url' => '/~{userId}/api/ocm/GetReceivedShare', 'verb' => 'POST'],
         ['name' => 'ocm#UpdateSentShare', 'url' => '/~{userId}/api/ocm/UpdateSentShare', 'verb' => 'POST'],
         ['name' => 'ocm#UpdateReceivedShare', 'url' => '/~{userId}/api/ocm/UpdateReceivedShare', 'verb' => 'POST'],
         ['name' => 'ocm#GetUser', 'url' => '/~{dummy}/api/user/GetUser', 'verb' => 'POST'],
+
         /*
         ['name' => 'storage#createHome', 'url' => '/~{userId}/CreateHome', 'verb' => 'POST'],
         ['name' => 'storage#listFolder', 'url' => '/~{userId}/ListFolder', 'verb' => 'POST'],
@@ -50,15 +60,18 @@ $application->registerRoutes($this,
         ['name' => 'storage#upload', 'url' => '/~{userId}/Upload', 'verb' => 'POST'],
         ['name' => 'storage#handleUpload', 'url' => '/~{userId}/Upload/{path}', 'verb' => 'PUT'],
         ['name' => 'storage#getMD', 'url' => '/~{userId}/GetMD', 'verb' => 'POST'],
-*/
+        */
 
+        // Files routes
         ['name' => 'storage#handleGet', 'url' => '/~{userId}/files/{path}', 'verb' => 'GET', 'requirements' => ['path' => '.+']],
         ['name' => 'storage#handlePost', 'url' => '/~{userId}/files/{path}', 'verb' => 'POST', 'requirements' => ['path' => '.+']],
         ['name' => 'storage#handlePut', 'url' => '/~{userId}/files/{path}', 'verb' => 'PUT', 'requirements' => ['path' => '.+']],
         ['name' => 'storage#handleDelete', 'url' => '/~{userId}/files/{path}', 'verb' => 'DELETE', 'requirements' => ['path' => '.+']],
         ['name' => 'storage#handleHead', 'url' => '/~{userId}/files/{path}', 'verb' => 'HEAD', 'requirements' => ['path' => '.+']],
 
-        ['name' => 'app#generate', 'url' => '/', 'verb' => 'GET'],
+
+        // Internal app routes
+        ['name' => 'app#contacts', 'url' => '/', 'verb' => 'GET'],
         ['name' => 'app#generate', 'url' => '/generate', 'verb' => 'GET'],
         ['name' => 'app#accept', 'url' => '/accept', 'verb' => 'GET'],
         ['name' => 'app#contacts', 'url' => '/contacts', 'verb' => 'GET'],
@@ -67,13 +80,19 @@ $application->registerRoutes($this,
         ['name' => 'app#contactsAccept', 'url' => '/contacts/accept', 'verb' => 'POST'],
         ['name' => 'app#contactsFindUsers', 'url' => '/contacts/users', 'verb' => 'GET'],
 
+        // page routes
         ['name' => 'page#get_internal_metrics', 'url' => '/internal_metrics', 'verb' => 'GET'],
         ['name' => 'page#get_metrics', 'url' => '/metrics', 'verb' => 'GET'],
 
+        // settings routes
         ["name" => "settings#save_settings", "url" => "/ajax/settings/address", "verb" => "PUT"],
         ["name" => "settings#get_settings", "url" => "/ajax/settings", "verb" => "GET"],
         ["name" => "settings#get_sciencemesh_settings", "url" => "/sciencemesh_settings", "verb" => "GET"],
         ["name" => "settings#save_sciencemesh_settings", "url" => "/ajax/sciencemesh_settings/save", "verb" => "GET"],
         ["name" => "settings#check_connection_settings", "url" => "/ajax/check_connection_settings", "verb" => "GET"]
-    ]]
-);
+
+    ]
+];
+
+$application = new ScienceMeshApp();
+$application->registerRoutes($this, $routes_array);
