@@ -54,7 +54,6 @@ class SettingsController extends Controller
     )
     {
         parent::__construct($AppName, $request);
-
         $this->serverConfig = new \OCA\ScienceMesh\ServerConfig($sciencemeshConfig);
 
         $this->urlGenerator = $urlGenerator;
