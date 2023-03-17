@@ -5,8 +5,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var parts = full.split('@')
 		var token = parts[0]
 		var providerDomain = parts[1]
-		var data = 'providerDomain=' + encodeURIComponent(providerDomain) +
-				'&token=' + encodeURIComponent(token);
+		var data = 'providerDomain=' + encodeURIComponent(providerDomain) + '&token=' + encodeURIComponent(token);
 
 		var baseUrl = OC.generateUrl('/apps/sciencemesh');
 		$.ajax({
@@ -49,17 +48,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		const params = new Proxy(new URLSearchParams(window.location.search), {
 			get: (searchParams, prop) => searchParams.get(prop),
 		});
-		if ((typeof params.token == 'string') && (params.token.length > 0) &&
-			(typeof params.providerDomain == 'string') && (params.providerDomain.length > 0)) {
-				document.getElementById('token-input').value = `${params.token}@${params.providerDomain}`;
-				document.getElementById('providerDomain').innerHTML = params.providerDomain;
-				$("#dialog").show();
+		if ((typeof params.token == 'string') && (params.token.length > 0) && (typeof params.providerDomain == 'string') && (params.providerDomain.length > 0)) {
+			document.getElementById('token-input').value = `${params.token}@${params.providerDomain}`;
+			document.getElementById('providerDomain').innerHTML = params.providerDomain;
+			$("#dialog").show();
 		} else {
-				console.log("checkQueryString fail!");
-				$("#test_error").addClass('text-error');
-				$("#test_error").show();
-				$("#test_error").html('No token in the URL');
+			console.log("checkQueryString fail!");
+			$("#test_error").addClass('text-error');
+			$("#test_error").show();
+			$("#test_error").html('No token in the URL');
 		}
 	}
 	checkQueryString();
-}); 
+});
