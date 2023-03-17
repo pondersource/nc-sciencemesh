@@ -5,6 +5,7 @@ namespace OCA\ScienceMesh\Tests\Unit\Controller;
 use PHPUnit_Framework_TestCase;
 
 use OCA\ScienceMesh\Controller\RevaController;
+use OCA\ScienceMesh\Controller\OcmController;
 use OCA\ScienceMesh\Service\UserService;
 
 /**
