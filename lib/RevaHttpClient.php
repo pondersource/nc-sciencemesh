@@ -63,6 +63,7 @@ class RevaHttpClient {
 			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		}
 
+		
 		if ($this->curlDebug) {
 			curl_setopt($ch, CURLOPT_VERBOSE, true);
 			$streamVerboseHandle = fopen('php://temp', 'w+');
