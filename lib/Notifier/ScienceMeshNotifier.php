@@ -25,6 +25,7 @@ namespace OCA\ScienceMesh\Notifier;
 
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 
