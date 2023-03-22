@@ -29,6 +29,9 @@ class ScienceMeshApp extends App {
 
 		$shareManager = $container->get('OCP\Share\IManager');
 		$shareManager->registerShareProvider(ScienceMeshShareProvider::class);
+
+		$notificationManager = $server->getNotificationManager();
+
 		$notificationManager->registerNotifierService(ScienceMeshNotifier::class);
 		
 		$container->registerService('UserSession', function ($c) {
@@ -44,7 +47,6 @@ class ScienceMeshApp extends App {
 
 
 
-		$notificationManager = $server->getNotificationManager();
         $notificationManager->registerNotifier(function () use ($notificationManager) {
             return $this->getContainer()->query('\OCA\ScienceMesh\Notifier\ScienceMeshNotifier');
         }, function () {
