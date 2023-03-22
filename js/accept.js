@@ -23,6 +23,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				document.getElementById('token').value = '';
 				element.innerHTML = 'Invitation has successfully accepted!';
 				jQuery(element).addClass('text-error');
+				$("#test_error").addClass('text-error');
+				element.innerHTML = 'Something goes wrong: No Sciencemesh Connection';
+			} else if(response.startsWith('Accepted invite from')){
+				$("#test_error").addClass('text-success');
+				document.getElementById('token').value = '';
 			} else {
 				let result = JSON.parse(response);
 				if (result.hasOwnProperty('message')) {
