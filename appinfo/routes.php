@@ -12,6 +12,10 @@ namespace OCA\MyApp\AppInfo;
 
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
 
+
+
+
+
 $routes_array = [
 	'routes' => [
 		// reva routes
