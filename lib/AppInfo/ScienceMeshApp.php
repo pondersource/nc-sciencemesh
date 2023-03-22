@@ -7,6 +7,7 @@ use OCA\ScienceMesh\Plugins\ScienceMeshSearchPlugin;
 use OCA\ScienceMesh\ShareProvider\ScienceMeshShareProvider;
 use OCA\ScienceMesh\Notifier\ScienceMeshNotifier;
 
+
 class ScienceMeshApp extends App {
 	public const APP_ID = 'sciencemesh';
 	public const SHARE_TYPE_REMOTE = 6;
@@ -22,6 +23,14 @@ class ScienceMeshApp extends App {
 				$c->query('UserSession')
 			);
 		});
+		
+		$collaboration = $container->get('OCP\Collaboration\Collaborators\ISearch');
+		$collaboration->registerPlugin(['shareType' => 'SHARE_TYPE_REMOTE', 'class' => ScienceMeshSearchPlugin::class]);
+
+		$shareManager = $container->get('OCP\Share\IManager');
+		$shareManager->registerShareProvider(ScienceMeshShareProvider::class);
+		$notificationManager->registerNotifierService(ScienceMeshNotifier::class);
+		
 		$container->registerService('UserSession', function ($c) {
 			return $c->query('ServerContainer')->getUserSession();
 		});
@@ -32,13 +41,37 @@ class ScienceMeshApp extends App {
 			return $c->query('UserSession')->getUser();
 		});
 
-		$collaboration = $container->get('OCP\Collaboration\Collaborators\ISearch');
-		$collaboration->registerPlugin(['shareType' => 'SHARE_TYPE_REMOTE', 'class' => ScienceMeshSearchPlugin::class]);
 
-		$shareManager = $container->get('OCP\Share\IManager');
-		$shareManager->registerShareProvider(ScienceMeshShareProvider::class);
+
 
 		$notificationManager = $server->getNotificationManager();
-		$notificationManager->registerNotifierService(ScienceMeshNotifier::class);
+        $notificationManager->registerNotifier(function () use ($notificationManager) {
+            return $this->getContainer()->query('\OCA\ScienceMesh\Notifier\ScienceMeshNotifier');
+        }, function () {
+            $l = \OC::$server->getL10N('sciencemesh');
+            return [
+                'id' => 'sciencemesh',
+                'name' => $l->t('Science Mesh'),
+            ];
+        });
 	}
+
+    /**
+     * @return ScienceMeshShareProvider
+     */
+    public function getScienceMeshShareProvider()
+    {
+        $container = $this->getContainer();
+        $dbConnection = $container->query("OCP\IDBConnection");
+        $i10n = $container->query("OCP\IL10N");
+
+        $logger = $container->query("OCP\ILogger");
+        $rootFolder = $container->query("OCP\Files\IRootFolder");
+
+        $config = $container->query("OCP\IConfig");
+        $userManager = $container->query("OCP\IUserManger");
+        $gsConfig = new GlobalScaleConfig($config);
+
+        return new ScienceMeshShareProvider($dbConnection, $i10n, $logger, $rootFolder, $config, $userManager, $gsConfig);
+    }
 }

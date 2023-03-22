@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(event) {
-	document.getElementById('elem').onclick = function () {
+	document.getElementById('accept-button').onclick = function () {
 		console.log('clicked');
 		var full = document.getElementById('token-input').value
 		var parts = full.split('@')
@@ -17,6 +17,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			var element = document.getElementById("test_error");
 			$("#test_error").show();
 			if (response === '' || response === false) {
+				element.innerHTML = 'Something goes wrong: No Sciencemesh Connection';
+				jQuery(element).addClass('text-error');
+			} else if(response.startsWith('Accepted invite from')){
+				document.getElementById('token').value = '';
+				element.innerHTML = 'Invitation has successfully accepted!';
+				jQuery(element).addClass('text-error');
 				$("#test_error").addClass('text-error');
 				element.innerHTML = 'Something goes wrong: No Sciencemesh Connection';
 			} else if(response.startsWith('Accepted invite from')){
@@ -27,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				if (result.hasOwnProperty('message')) {
 					let test = result.message;
 					element.innerHTML = test || 'Success';
+					jQuery(element).addClass('text-error');
 					$('#provider').hide();
 					$('#display_name').hide();
 				} else {
@@ -46,8 +53,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		const params = new Proxy(new URLSearchParams(window.location.search), {
 			get: (searchParams, prop) => searchParams.get(prop),
 		});
-		if ((typeof params.token == 'string') && (params.token.length > 0) &&  (typeof params.providerDomain == 'string') && (params.providerDomain.length > 0)) {
-			console.log("checkQueryString success!");
+		if ((typeof params.token == 'string') && (params.token.length > 0) && (typeof params.providerDomain == 'string') && (params.providerDomain.length > 0)) {
 			document.getElementById('token-input').value = `${params.token}@${params.providerDomain}`;
 			document.getElementById('providerDomain').innerHTML = params.providerDomain;
 			$("#dialog").show();

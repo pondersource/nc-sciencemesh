@@ -249,7 +249,7 @@ class SettingsController extends Controller
 		$this->serverConfig->setIopUrl($sciencemesh_iop_url);
 		$this->serverConfig->setRevaSharedSecret($sciencemesh_shared_secret);
 
-		return new TextPlainResponse(true, Http::STATUS_OK);
+		return new DataResponse(["status" => true]);
 	}
 
 	/**

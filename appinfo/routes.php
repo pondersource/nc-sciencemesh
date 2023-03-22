@@ -8,6 +8,10 @@
  * it's instantiated in there
  */
 
+namespace OCA\MyApp\AppInfo;
+
+use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
+
 
 
 
@@ -37,7 +41,7 @@ $routes_array = [
 		['name' => 'reva#SetArbitraryMetadata', 'url' => '/~{userId}/api/storage/SetArbitraryMetadata', 'verb' => 'POST'],
 		['name' => 'reva#UnsetArbitraryMetadata', 'url' => '/~{userId}/api/storage/UnsetArbitraryMetadata', 'verb' => 'POST'],
 		['name' => 'reva#UpdateGrant', 'url' => '/~{userId}/api/storage/UpdateGrant', 'verb' => 'POST'],
-		['name' => 'reva#Upload', 'url' => '/~{userId}/api/storage/Upload/{path}', 'verb' => 'PUT', 'requirements' => ['path' => '.+']],
+		['name' => 'reva#Upload', 'url' => '/~{userId}/api/storage/Upload/{path}', 'verb' => 'PUT'],
 
 		// OCM routes
 		['name' => 'ocm#addSentShare', 'url' => '/~{userId}/api/ocm/addSentShare', 'verb' => 'POST'],
@@ -46,7 +50,7 @@ $routes_array = [
 		['name' => 'ocm#Unshare', 'url' => '/~{userId}/api/ocm/Unshare', 'verb' => 'POST'],
 		['name' => 'ocm#UpdateShare', 'url' => '/~{userId}/api/ocm/UpdateShare', 'verb' => 'POST'],
 		['name' => 'ocm#ListSentShares', 'url' => '/~{userId}/api/ocm/ListSentShares', 'verb' => 'POST'],
-		['name' => 'ocm#ListSentShares', 'url' => '/~{userId}/api/ocm/ListShares', 'verb' => 'POST'], // alias for ListSentShares
+		['name' => 'ocm#ListShares', 'url' => '/~{userId}/api/ocm/ListShares', 'verb' => 'POST'], // alias for ListSentShares
 		['name' => 'ocm#ListReceivedShares', 'url' => '/~{userId}/api/ocm/ListReceivedShares', 'verb' => 'POST'],
 		['name' => 'ocm#GetReceivedShare', 'url' => '/~{userId}/api/ocm/GetReceivedShare', 'verb' => 'POST'],
 		['name' => 'ocm#UpdateSentShare', 'url' => '/~{userId}/api/ocm/UpdateSentShare', 'verb' => 'POST'],
@@ -94,4 +98,5 @@ $routes_array = [
 	]
 ];
 
-return $routes_array;
+$application = new ScienceMeshApp();
+$application->registerRoutes($this, $routes_array);
