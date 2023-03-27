@@ -61,6 +61,7 @@
 
             $(".section-sciencemesh").addClass("icon-loading");
             var baseUrl = OC.generateUrl('/apps/sciencemesh');
+
             $.ajax({
                 method: "GET",
                 url: baseUrl + "/ajax/sciencemesh_settings/save",
