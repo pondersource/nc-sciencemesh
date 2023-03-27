@@ -5,7 +5,6 @@
             AppName: "sciencemesh"
         }, OCA.ScienceMesh)
 
-
         $("#sciencemeshSave").click(function () {
             $(".section-sciencemesh").addClass("icon-loading");
             var apiKey = $("#sciencemeshAPIKey").val().trim();
@@ -126,10 +125,8 @@
                             timeout: 10
                         });
                     }
-
                 }
             });
         });
     });
-
 })(jQuery, OC);
