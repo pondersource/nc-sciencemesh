@@ -42,12 +42,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
                                         <p class="username-provider">${username}</p>
                                     </td>
                                 </tr>
-                            `;
+                        `;
                     }
-                            
+    
                     var element = document.getElementById("show_result");
                     element.innerHTML = result;
-                        
+
                     $('#show_result').show();
                 }else{
                     const result = `
