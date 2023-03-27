@@ -8,9 +8,15 @@
  * it's instantiated in there
  */
 
+<<<<<<< HEAD
 namespace OCA\MyApp\AppInfo;
 
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
+=======
+
+
+
+>>>>>>> origin/main
 
 $routes_array = [
 	'routes' => [
@@ -94,5 +100,9 @@ $routes_array = [
 	]
 ];
 
+<<<<<<< HEAD
 $application = new ScienceMeshApp();
 $application->registerRoutes($this, $routes_array);
+=======
+return $routes_array;
+>>>>>>> origin/main

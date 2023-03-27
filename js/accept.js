@@ -17,18 +17,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			var element = document.getElementById("test_error");
 			$("#test_error").show();
 			if (response === '' || response === false) {
+				$("#test_error").addClass('text-error');
 				element.innerHTML = 'Something goes wrong: No Sciencemesh Connection';
-				jQuery(element).addClass('text-error');
 			} else if(response.startsWith('Accepted invite from')){
+				$("#test_error").addClass('text-success');
 				document.getElementById('token').value = '';
-				element.innerHTML = 'Invitation has successfully accepted!';
-				jQuery(element).addClass('text-error');
 			} else {
 				let result = JSON.parse(response);
 				if (result.hasOwnProperty('message')) {
 					let test = result.message;
 					element.innerHTML = test || 'Success';
-					jQuery(element).addClass('text-error');
 					$('#provider').hide();
 					$('#display_name').hide();
 				} else {
