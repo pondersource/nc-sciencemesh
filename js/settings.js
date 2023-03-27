@@ -61,8 +61,6 @@
 
             $(".section-sciencemesh").addClass("icon-loading");
             var baseUrl = OC.generateUrl('/apps/sciencemesh');
-    
-
             $.ajax({
                 method: "GET",
                 url: baseUrl + "/ajax/sciencemesh_settings/save",
@@ -88,7 +86,6 @@
                     }
                 }
             });
-
         });
 
         $('#check_connection_sciencemesh_iop_url').on('click',function(){
@@ -104,10 +101,10 @@
                 data: {
                     sciencemesh_iop_url: sciencemesh_iop_url
                 },
-                success: function onSuccess(res) {
+                success: function onSuccess(response) {
                     $(".section-sciencemesh").removeClass("icon-loading");
-                    if(res){
-                        if (res.enabled) {
+                    if(response){
+                        if (response.enabled) {
                             var message = t(OCA.ScienceMesh.AppName, "Connection is available");
                         }else{
                             var message = t(OCA.ScienceMesh.AppName, "Connection is not available");
