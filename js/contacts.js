@@ -44,7 +44,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
                                 </tr>
                         `;
                     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
                     var element = document.getElementById("show_result");
                     element.innerHTML = result;
 
