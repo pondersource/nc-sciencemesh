@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function(event) {
     //Everything will be for working with contacts
     var baseUrl = OC.generateUrl('/apps/sciencemesh');
-    $('#show_result').hide(); 
+    $('#test_error').hide(); 
     $.ajax({
         url: baseUrl + '/contacts/users',
         type: 'GET',
         contentType: 'application/json',
     }).done(function (response) {
-        if(response === '' || response === false) {
+        if(response == '' || response === false) {
             var element = document.getElementById("show_result");
             element.innerHTML= `
                                 <tr class="app-content-list-item">
