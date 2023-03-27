@@ -42,16 +42,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
                                         <p class="username-provider">${username}</p>
                                     </td>
                                 </tr>
-                                `;
-                            }
+                            `;
+                    }
                             
-                            var element = document.getElementById("show_result");
-                            element.innerHTML = result;
+                    var element = document.getElementById("show_result");
+                    element.innerHTML = result;
                         
-                            $('#show_result').show();
-                        }else{
-                            const result = `
-                                <tr colspan="3" href="#" class="app-content-list-item" >
+                    $('#show_result').show();
+                }else{
+                    const result = `
+                            <tr colspan="3" href="#" class="app-content-list-item" >
                                 <td style="width:40% !important">
                                     <p class="username-provider">There are no contacts!</p>
                                 </td>
