@@ -173,7 +173,8 @@ class ScienceMeshShareProvider implements IShareProvider {
 		// "home" is reva's default work space name, prepending that in the source path:
 		$sourcePath = $prefix . "home/" . implode("/", array_slice($pathParts, $sourceOffset)) . $suffix;
 		$targetPath = $prefix . implode("/", array_slice($pathParts, $targetOffset)) . $suffix;
-		$shareWithParts = explode("@", $shareWith);
+		$shareWithParts = str_replace('@'.end(explode("@", $shareWith)),'',$shareWith);
+		$shareWithPartsHost = end(explode("@", $shareWith));
 		error_log("SAH-createShare calling RHC-createShare");
 		$response = $this->revaHttpClient->createShare($sender, [
 			'sourcePath' => $sourcePath,
