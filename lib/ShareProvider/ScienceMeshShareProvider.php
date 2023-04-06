@@ -180,8 +180,8 @@ class ScienceMeshShareProvider implements IShareProvider {
 			'sourcePath' => $sourcePath,
 			'targetPath' => $targetPath,
 			'type' => $node->getType(),
-			'recipientUsername' => $shareWithParts[0],
-			'recipientHost' => $shareWithParts[1]
+			'recipientUsername' => $shareWithParts,
+			'recipientHost' => $shareWithPartsHost
 		]);
 		if (!isset($response) || !isset($response->share) || !isset($response->share->owner) || !isset($response->share->owner->idp)) {
 			throw new \Exception("Unexpected response from reva");
