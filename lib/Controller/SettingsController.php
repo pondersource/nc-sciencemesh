@@ -245,9 +245,11 @@ class SettingsController extends Controller
 	{
 		$sciencemesh_iop_url = $this->request->getParam('sciencemesh_iop_url');
 		$sciencemesh_shared_secret = $this->request->getParam('sciencemesh_shared_secret');
+		$sciencemesh_user_groups = $this->request->getParam('sciencemesh_group_access');
 
 		$this->serverConfig->setIopUrl($sciencemesh_iop_url);
 		$this->serverConfig->setRevaSharedSecret($sciencemesh_shared_secret);
+		$this->serverConfig->setGroupAccess($sciencemesh_user_groups);
 
 		return new TextPlainResponse(true, Http::STATUS_OK);
 	}

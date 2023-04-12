@@ -17,7 +17,6 @@ class SciencemeshSettingsAdmin implements ISettings {
         $this->config = $config;
         $this->l = $l;
         $this->serverConfig = new \OCA\ScienceMesh\ServerConfig($config);
-
     }
 
     /**
@@ -27,9 +26,25 @@ class SciencemeshSettingsAdmin implements ISettings {
         $parameters = [
             'sciencemeshSetting' => $this->config->getSystemValue('sciencemesh_advance_settings', true),
             'sciencemeshIopUrl' => $this->serverConfig->getIopUrl(),
-            'sciencemeshRevaSharedSecret' => $this->serverConfig->getRevaSharedSecret()
+            'sciencemeshRevaSharedSecret' => $this->serverConfig->getRevaSharedSecret(),
+            'sciencemeshUserGroups' => $this->serverConfig->getUserGroups()
         ];
-        
+        $groupManager = \OC::$server->getGroupManager();
+
+
+        // Get the group manager
+        $groupManager = \OC::$server->getGroupManager();
+
+        // Get the list of all groups
+        $groups = $groupManager->search('');
+
+        // Convert the groups to an array
+        $groupArray = array();
+        foreach ($groups as $group) {
+            $groupArray[] = $group->getGID();
+        }
+        $parameters['sciencemeshUserGroupsAll'] = $groupArray;
+
         return new TemplateResponse('sciencemesh', 'settings/admin', $parameters, '');
     }
 

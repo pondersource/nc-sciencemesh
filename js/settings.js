@@ -58,6 +58,7 @@
         $('#sciencemesh_setting_submit_btn').on('click',function(){
             var sciencemesh_iop_url = $('#sciencemesh_iop_url').val().trim();
             var sciencemesh_shared_secret = $("#sciencemesh_shared_secret").val().trim();
+            var sciencemesh_group_access = $("#sciencemesh_group_access").val().toString();
 
             $(".section-sciencemesh").addClass("icon-loading");
             var baseUrl = OC.generateUrl('/apps/sciencemesh');
@@ -68,7 +69,8 @@
                 contentType: 'application/json',
                 data: {
                     sciencemesh_shared_secret: sciencemesh_shared_secret,
-                    sciencemesh_iop_url: sciencemesh_iop_url
+                    sciencemesh_iop_url: sciencemesh_iop_url,
+                    sciencemesh_group_access: sciencemesh_group_access
                 },
                 success: function onSuccess(response) {
                     $(".section-sciencemesh").removeClass("icon-loading");

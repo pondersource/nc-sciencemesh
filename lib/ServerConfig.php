@@ -81,6 +81,9 @@ class ServerConfig {
 	public function getNumStorage() {
 		return $this->config->getAppValue('sciencemesh','numStorage');
 	}
+	public function getUserGroups() {
+		return $this->config->getAppValue('sciencemesh','userGroups');
+	}
 
 	public function setApiKey($apiKey) {
 		$this->config->setAppValue('sciencemesh','apiKey',$apiKey);
@@ -108,5 +111,8 @@ class ServerConfig {
 	}
 	public function setNumStorage($numStorage) {
 		$this->config->setAppValue('sciencemesh','numStorage',$numStorage);
+	}
+	public function setGroupAccess($groupAccess){
+		$this->config->setAppValue('sciencemesh','userGroups',$groupAccess);
 	}
 }

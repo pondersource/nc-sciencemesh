@@ -26,6 +26,15 @@ style('sciencemesh', 'style');
             <label for="sciencemesh_shared_secret" name="sciencemesh_shared_secret">Shared Secret</label>
             <input type="text" style="width: 81.5%;"id="sciencemesh_shared_secret" value="<?php echo $this->vars['sciencemeshRevaSharedSecret']; ?>">
         </div>
+        
+        <div class="sciencemesh-settings-row">
+            <label for="sciencemesh_group_access" name="sciencemesh_group_access">Permission access to Sciencemesh</label>
+            <select multiple style="width: 81.5%;height:100px" id="sciencemesh_group_access" name="sciencemesh_group_access">
+            <?php foreach($this->vars['sciencemeshUserGroupsAll'] as $group): ?>
+                <option <?php if(in_array($group,explode(',',$this->vars['sciencemeshUserGroups']))) echo 'selected="selected"'; ?> value="<?php echo $group; ?>"><?php echo $group; ?></option>
+            <?php endforeach; ?>
+            </select>
+        </div>
         <hr style="opacity: 0.1;">
         <input type="button" name="sciencemesh_setting_submit_btn" id="sciencemesh_setting_submit_btn" value="Save settings">
         </div>
