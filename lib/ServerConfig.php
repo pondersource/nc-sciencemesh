@@ -113,6 +113,6 @@ class ServerConfig {
 		$this->config->setAppValue('sciencemesh','numStorage',$numStorage);
 	}
 	public function setGroupAccess($groupAccess){
-		$this->config->setAppValue('sciencemesh','userGroups',$groupAccess);
+		$this->config->setAppValue('sciencemesh','enabled',json_encode($groupAccess));
 	}
 }
