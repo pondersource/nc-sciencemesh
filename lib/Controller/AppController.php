@@ -118,9 +118,12 @@ class AppController extends Controller {
 	public function invitationsGenerate() {
 		$invitationsData = $this->httpClient->generateTokenFromReva($this->userId);
 		$inviteLinkStr = $invitationsData["invite_link"];
+<<<<<<< HEAD
 		$iopUrl = $invitationsData["user_id"]["idp"];
 		$iopDomain =  parse_url($iopUrl)["host"];
 		// $meshDirectoryUrl = "https://sciencemesh.cesnet.cz/iop/meshdir/";
+=======
+>>>>>>> b559dfa (Remove comment)
 		$meshDirectoryUrl = $this->config->getAppValue('sciencemesh', 'meshDirectoryUrl', 'https://sciencemesh.cesnet.cz/iop/meshdir/');
     if (!$inviteLinkStr) {
 			return new TextPlainResponse("Unexpected response from Reva", Http::STATUS_INTERNAL_SERVER_ERROR);
