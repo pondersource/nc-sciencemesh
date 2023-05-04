@@ -92,12 +92,12 @@ $routes_array = [
 		["name" => "settings#check_connection_settings", "url" => "/ajax/check_connection_settings", "verb" => "GET"],
 		
 		// API Routes
-		["name" => "api#add_token", "url" => "/v1/add_token", "verb" => "POST"],
-		["name" => "api#get_token", "url" => "/v1/get_token", "verb" => "POST"],
-		["name" => "api#tokens_list", "url" => "/v1/tokens_list", "verb" => "POST"],
-		["name" => "api#add_remote_user", "url" => "/v1/add_remote_user", "verb" => "POST"],
-		["name" => "api#get_remote_user", "url" => "/v1/get_remote_user", "verb" => "POST"],
-		["name" => "api#find_remote_user", "url" => "/v1/find_remote_user", "verb" => "POST"]
+		["name" => "Api#add_token", "url" => "/v1/add_token", "verb" => "GET"],
+		["name" => "Api#get_token", "url" => "/v1/get_token", "verb" => "POST"],
+		["name" => "Api#tokens_list", "url" => "/v1/tokens_list", "verb" => "POST"],
+		["name" => "Api#add_remote_user", "url" => "/v1/add_remote_user", "verb" => "POST"],
+		["name" => "Api#get_remote_user", "url" => "/v1/get_remote_user", "verb" => "POST"],
+		["name" => "Api#find_remote_user", "url" => "/v1/find_remote_user", "verb" => "POST"]
 	
 	]
 ];
