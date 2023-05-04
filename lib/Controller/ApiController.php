@@ -109,41 +109,84 @@ class ApiController extends Controller
         $qb->select('*')
 		->from('ocm_tokens')
 		->where(
-			$qb->expr()->eq('token', $qb->createNamedParameter('tokenValue', IQueryBuilder::PARAM_STR))
-		)
-		->andWhere(
-			$qb->expr()->gt('expiry_date', $qb->createNamedParameter('revaLoopbackSecret', IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('token', $qb->createNamedParameter($request->getParam('tokenValue'), IQueryBuilder::PARAM_STR))
 		);
-		
-
-
-        $qb->insert('ocm_tokens')
-		->values(
-			array(
-				'token' => $qb->createNamedParameter($request->getParam('tokenValue'), IQueryBuilder::PARAM_STR),
-				'initiator' => $qb->createNamedParameter($request->getParam('initiator'), IQueryBuilder::PARAM_STR),
-				'expiration' => $qb->createNamedParameter($request->getParam('expiry_date'), IQueryBuilder::PARAM_STR),
-				'description' => $qb->createNamedParameter($request->getParam('description'), IQueryBuilder::PARAM_STR)
-			)
-		);
-		
+		// ->andWhere(
+		// 	$qb->expr()->lt('expiry_date', $qb->createNamedParameter('expiry_date', IQueryBuilder::PARAM_STR))
+		// );
         $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+		
+
+		if(empty($row)){
+			$qb->insert('ocm_tokens')
+			->values(
+				array(
+					'token' => $qb->createNamedParameter($request->getParam('tokenValue'), IQueryBuilder::PARAM_STR),
+					'initiator' => $qb->createNamedParameter($request->getParam('initiator'), IQueryBuilder::PARAM_STR),
+					'expiration' => $qb->createNamedParameter($request->getParam('expiry_date'), IQueryBuilder::PARAM_STR),
+					'description' => $qb->createNamedParameter($request->getParam('description'), IQueryBuilder::PARAM_STR)
+				)
+			);
+			$cursor = $qb->execute();
+		}else{
+			$cursor = 0;
+		}
 
 		if($cursor)
-			return new TextPlainResponse(['message' => 'Token added!','status' => 200, 'data' => $cursor], Http::STATUS_OK);
+			return new TextPlainResponse(json_encode(['message' => 'Token added!','status' => 200, 'data' => json_encode($cursor)]), Http::STATUS_OK);
 		else
-			return new TextPlainResponse(['message' => 'Token is not added!','status' => 200, 'data' => 0], Http::STATUS_OK);
-
+			return new TextPlainResponse(json_encode(['message' => 'Token is not added!','status' => 200, 'data' => 0]), Http::STATUS_OK);
 	}
 
 	
-	public function getToken(){
+	public function getToken($request){
 
+		$qb = $this->db->getQueryBuilder();
+		
+		$today = new DateTime(); 
+		$today->modify('+1 day');
+		$expiry_date = $today->format('Y-m-d H:i:s');
+
+		$token_value = bin2hex(random_bytes(16));
+
+        $qb->insert('ocm_tokens')
+			->values(
+				array(
+					'token' => $qb->createNamedParameter($token_value, IQueryBuilder::PARAM_STR),
+					'initiator' => $qb->createNamedParameter('API_REQUEST', IQueryBuilder::PARAM_STR),
+					'expiration' => $qb->createNamedParameter($expiry_date, IQueryBuilder::PARAM_STR),
+					'description' => $qb->createNamedParameter('API_GENERATED', IQueryBuilder::PARAM_STR)
+				)
+			);
+
+		$cursor = $qb->execute();
+
+		
+
+        $qb->select('*')
+		->from('ocm_tokens')
+		->where(
+			$qb->expr()->eq('token', $qb->createNamedParameter($token_value, IQueryBuilder::PARAM_STR))
+		);
+		// ->andWhere(
+		// 	$qb->expr()->lt('expiry_date', $qb->createNamedParameter('expiry_date', IQueryBuilder::PARAM_STR))
+		// );
+
+        $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+		
+		return new TextPlainResponse(json_encode(['message' => 'Token generated!','status' => 200, 'data' => $row]), Http::STATUS_OK);
 	}
 
 	
 	public function tokensList(){
+        $qb->select('*')
+		->from('ocm_tokens');
 
+        $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+		return new TextPlainResponse(json_encode(['message' => 'Token listed!','status' => 200, 'data' => $row]), Http::STATUS_OK);
 	}
 
 	
