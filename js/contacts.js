@@ -1,7 +1,69 @@
 document.addEventListener("DOMContentLoaded", function(event) {
     //Everything will be for working with contacts
+<<<<<<< HEAD
     loadData("");
 
+=======
+    var baseUrl = OC.generateUrl('/apps/sciencemesh');
+    $('#test_error').hide(); 
+    $.ajax({
+        url: baseUrl + '/contacts/users',
+        type: 'GET',
+        contentType: 'application/json',
+    }).done(function (response) {
+        if(response == '' || response === false) {
+            var element = document.getElementById("show_result");
+            element.innerHTML= `
+                                <tr class="app-content-list-item">
+                                    <th style="border-radius:100%">
+                                        No Sciencemesh Connection
+                                    </th>
+                                </tr>`;
+            $('#show_result').show(); 
+        } else {
+            let acceptedUsers = JSON.parse(response);
+            if (acceptedUsers.length == 0) {
+                const result = `
+                <tr>
+                    <td>
+                        <p class="username-provider">There are no contacts!</p>
+                    </td>
+                </tr>`;                  
+                var element = document.getElementById("show_result");
+                element.innerHTML = result;
+                $('#show_result').show();
+            } else {
+                let result = '';
+                for(i in acceptedUsers) {
+                    const displayName = acceptedUsers[i].display_name;
+                    const username = acceptedUsers[i].id.opaque_id;
+                    const idp = acceptedUsers[i].id.idp;
+                    const provider =  (idp.startsWith("http") ? new URL(idp).host : idp);
+                    result += `
+                            <tr>
+                                <td style="border-radius:100%">
+                                    <p class="icon-contacts-dark contacts-profile-img"></p>
+                                </td>
+                                <td class="app-content-list-item-line-one contact-item">
+                                    <p class="displayname">${displayName}</p>
+                                </td>  
+                                <td>
+                                    <p class="username-provider">${username}</p>
+                                </td>
+                            </tr>
+                    `;
+                }
+                var element = document.getElementById("show_result");
+                element.innerHTML = result;
+                
+                $('#show_result').show();
+            }
+        }
+    }).fail(function (response, code) {
+        console.log(response)
+        //alert('The token is invalid')
+    });
+>>>>>>> 1d385a8 (Deal with non-URL idp)
     document.getElementById('token-generator').onclick = function () {
         var baseUrl = OC.generateUrl('/apps/sciencemesh');
         $.ajax({
