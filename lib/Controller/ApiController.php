@@ -43,17 +43,17 @@ class ApiController extends Controller
 	 * @param ILogger $logger - logger
 	 * @param AppConfig $config - application configuration
 	 */
-	public function __construct($AppName,
-								IRequest $request,
-								IURLGenerator $urlGenerator,
-								IL10N $trans,
-								ILogger $logger,
-								AppConfig $config,
-								IConfig $sciencemeshConfig,
-								IDBConnection $db,
+	public function __construct(
+		$AppName,
+		IRequest $request,
+		IURLGenerator $urlGenerator,
+		IL10N $trans,
+		ILogger $logger,
+		AppConfig $config,
+		IConfig $sciencemeshConfig,
+		IDBConnection $db,
 		$userId
-	)
-	{
+	) {
         parent::__construct($AppName, $request);
 		$this->serverConfig = new \OCA\ScienceMesh\ServerConfig($sciencemeshConfig);
 
@@ -65,27 +65,34 @@ class ApiController extends Controller
 		$this->request = $request;
     }
 
-    public function authentication($request){
+    /**
+     * Check if the request is authenticated by comparing the request's API key with the stored revaLoopbackSecret.
+     *
+     * @param IRequest $request
+     * @return bool
+     */
+    public function authentication($request)
+    {
         $qb = $this->db->getQueryBuilder();
-		
+
         $qb->select('*')
-		->from('appconfig')
-		->where(
-			$qb->expr()->eq('appid', $qb->createNamedParameter('sciencemesh', IQueryBuilder::PARAM_STR))
-		)
-		->andWhere(
-			$qb->expr()->eq('configkey', $qb->createNamedParameter('revaLoopbackSecret', IQueryBuilder::PARAM_STR))
-		);
-		
+            ->from('appconfig')
+            ->where(
+                $qb->expr()->eq('appid', $qb->createNamedParameter('sciencemesh', IQueryBuilder::PARAM_STR))
+            )
+            ->andWhere(
+                $qb->expr()->eq('configkey', $qb->createNamedParameter('revaLoopbackSecret', IQueryBuilder::PARAM_STR))
+            );
+
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 
-		if($row[0]['configvalue'] == $this->request->getHeader('apikey'))
-			return true;
-		else 
-			return false;
+        if ($row[0]['configvalue'] == $this->request->getHeader('apikey')) {
+            return true;
+        } else {
+            return false;
+        }
     }
-
 	
 	/**
 	 * @NoCSRFRequired
