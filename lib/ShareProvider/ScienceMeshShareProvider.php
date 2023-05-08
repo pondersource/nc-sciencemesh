@@ -472,7 +472,7 @@ class ScienceMeshShareProvider implements IShareProvider {
 		$qb->insert('share_external')
 			->setValue('share_type', $qb->createNamedParameter($share_type))
 			->setValue('remote', $qb->createNamedParameter($shareData["remote"]))
-			->setValue('remote_id', $qb->createNamedParameter($shareData["remote_id"]))
+			->setValue('remote_id', $qb->createNamedParameter(trim($shareData["remote_id"], '"')))
 			->setValue('share_token', $qb->createNamedParameter($shareData["share_token"]))
 			->setValue('password', $qb->createNamedParameter($shareData["password"]))
 			->setValue('name', $qb->createNamedParameter($shareData["name"]))
