@@ -450,6 +450,7 @@ class ScienceMeshShareProvider implements IShareProvider {
 	 */
 	public function addReceivedShareToDB($shareData) {
 		$share_type = IShare::TYPE_USER;
+		error_log(print_r($shareData, true));
 		$mountpoint = "{{TemporaryMountPointName#" . $shareData["name"] . "}}";
 		$mountpoint_hash = md5($mountpoint);
 		$qbt = $this->dbConnection->getQueryBuilder();
@@ -461,6 +462,11 @@ class ScienceMeshShareProvider implements IShareProvider {
 		if ($data = $cursor->fetch()) {
 			return $data['id'];
 		};
+
+		if(!str_starts_with(strtolower($shareData["remote"]), 'http://') && !str_starts_with(strtolower($shareData["remote"]), 'https://')){
+			$shareData["remote"] = "https://" . $shareData["remote"];
+		}
+
 		$accepted = IShare::STATUS_PENDING;
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->insert('share_external')
