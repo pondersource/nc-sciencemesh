@@ -2,9 +2,6 @@
 
 namespace OCA\ScienceMesh\Controller;
 
-
-
-
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\AppFramework\Controller;
@@ -64,17 +61,8 @@ class ApiController extends Controller
 		$this->logger = $logger;
 		$this->config = $config;
 		$this->sciencemeshConfig = $sciencemeshConfig;
-		$this->userId = $userId;
         $this->db = $db;
 		$this->request = $request;
-
-        // here we will add the calling function
-        // needs route check and authenticatation
-        if(!$this->authentication($this->request)) return new DataResponse(["status" => "401", "message" => "authentication failed", "data" => NULL]);
-
-		$method = is_string($this->request->getParam('method')) ? $this->request->getParam('method') : 'authentication';
-
-		return $this->$method($this->request);
     }
 
     public function authentication($request){
@@ -92,40 +80,46 @@ class ApiController extends Controller
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 
-		if($row[0]['configvalue'] == $request->getParam('apikey')) return true;
-		else return false;
-        return $row;
+		if($row[0]['configvalue'] == $this->request->getHeader('apikey'))
+			return true;
+		else 
+			return false;
     }
 
-	public function addToken($request){
-        
-		if(!$request->getParam('tokenValue') and !$request->getParam('initiator') and !$request->getParam('expiry_date') and !$request->getParam('description')){
-			return new TextPlainResponse(['message' => 'values are not provided properly!','status' => 412, 'data' => null], Http::STATUS_OK);
+	
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function addToken($initiator, $request){
+		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
+
+		if(!$this->request->getHeader('tokenValue') and !$initiator and !$this->request->getHeader('expiry_date') and !$this->request->getHeader('description')){
+			return new DataResponse(['message' => 'values are not provided properly!','status' => 412, 'data' => null], Http::STATUS_OK);
 		}
 
 		$qb = $this->db->getQueryBuilder();
-		
 
         $qb->select('*')
 		->from('ocm_tokens')
 		->where(
-			$qb->expr()->eq('token', $qb->createNamedParameter($request->getParam('tokenValue'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR))
 		);
-		// ->andWhere(
-		// 	$qb->expr()->lt('expiry_date', $qb->createNamedParameter('expiry_date', IQueryBuilder::PARAM_STR))
-		// );
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 		
+		$expiry_date = isset($expiry_date) ? $expiry_date : time();
 
 		if(empty($row)){
 			$qb->insert('ocm_tokens')
 			->values(
 				array(
-					'token' => $qb->createNamedParameter($request->getParam('tokenValue'), IQueryBuilder::PARAM_STR),
-					'initiator' => $qb->createNamedParameter($request->getParam('initiator'), IQueryBuilder::PARAM_STR),
-					'expiration' => $qb->createNamedParameter($request->getParam('expiry_date'), IQueryBuilder::PARAM_STR),
-					'description' => $qb->createNamedParameter($request->getParam('description'), IQueryBuilder::PARAM_STR)
+					'token' => $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR),
+					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
+					'expiration' => $qb->createNamedParameter($expiry_date, IQueryBuilder::PARAM_STR),
+					'description' => $qb->createNamedParameter($this->request->getHeader('description'), IQueryBuilder::PARAM_STR)
 				)
 			);
 			$cursor = $qb->execute();
@@ -134,71 +128,184 @@ class ApiController extends Controller
 		}
 
 		if($cursor)
-			return new TextPlainResponse(json_encode(['message' => 'Token added!','status' => 200, 'data' => json_encode($cursor)]), Http::STATUS_OK);
+			return new DataResponse((['message' => 'Token added!','status' => 200, 'data' => $cursor]), Http::STATUS_OK);
+		else if($cursor == 0)
+			return new DataResponse((['message' => 'Token already exists!','status' => 204, 'data' => 0]), Http::STATUS_OK);
 		else
-			return new TextPlainResponse(json_encode(['message' => 'Token is not added!','status' => 200, 'data' => 0]), Http::STATUS_OK);
+			return new DataResponse((['message' => 'Token added failed!','status' => 400, 'data' => 0]), Http::STATUS_INTERNAL_SERVER_ERROR);
 	}
 
-	
-	public function getToken($request){
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function getToken($initiator){
+
+		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 
 		$qb = $this->db->getQueryBuilder();
-		
-		$today = new DateTime(); 
-		$today->modify('+1 day');
-		$expiry_date = $today->format('Y-m-d H:i:s');
-
-		$token_value = bin2hex(random_bytes(16));
-
-        $qb->insert('ocm_tokens')
-			->values(
-				array(
-					'token' => $qb->createNamedParameter($token_value, IQueryBuilder::PARAM_STR),
-					'initiator' => $qb->createNamedParameter('API_REQUEST', IQueryBuilder::PARAM_STR),
-					'expiration' => $qb->createNamedParameter($expiry_date, IQueryBuilder::PARAM_STR),
-					'description' => $qb->createNamedParameter('API_GENERATED', IQueryBuilder::PARAM_STR)
-				)
-			);
-
-		$cursor = $qb->execute();
-
-		
 
         $qb->select('*')
 		->from('ocm_tokens')
 		->where(
-			$qb->expr()->eq('token', $qb->createNamedParameter($token_value, IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR))
 		);
-		// ->andWhere(
-		// 	$qb->expr()->lt('expiry_date', $qb->createNamedParameter('expiry_date', IQueryBuilder::PARAM_STR))
-		// );
 
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
+
+		if(empty($row)){
+			return new DataResponse((['message' => 'No Token found!','status' => 201, 'data' => '']), Http::STATUS_OK);
+		}else{
+			return new DataResponse((['message' => 'Token found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+		}
 		
-		return new TextPlainResponse(json_encode(['message' => 'Token generated!','status' => 200, 'data' => $row]), Http::STATUS_OK);
 	}
 
 	
-	public function tokensList(){
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function tokensList($initiator){
+
+		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
+
+		$qb = $this->db->getQueryBuilder();
+
         $qb->select('*')
+		->where(
+			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
+		)
 		->from('ocm_tokens');
 
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
-		return new TextPlainResponse(json_encode(['message' => 'Token listed!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+		return new DataResponse((['message' => 'Token listed!','status' => 200, 'data' => $row]), Http::STATUS_OK);
 	}
 
 	
-	public function addRemoteUser(){
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function addRemoteUser($initiator){
 
+		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
+		
+		if(!$this->request->getHeader('opaqueUserId') and !$this->request->getHeader('idp') and !$this->request->getHeader('email') and !$this->request->getHeader('displayName')){
+			return new DataResponse((['message' => 'values are not provided properly!','status' => 412, 'data' => null]), Http::STATUS_OK);
+		}
+
+		$qb = $this->db->getQueryBuilder();
+		
+
+        $qb->select('*')
+		->from('ocm_remote_users')
+		->where(
+			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR))
+		);
+        $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+		
+
+		if(empty($row)){
+			$qb->insert('ocm_remote_users')
+			->values(
+				array(
+					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
+					'opaque_user_id' => $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR),
+					'idp' => $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR),
+					'email' => $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR),
+					'display_name' => $qb->createNamedParameter($this->request->getHeader('displayName'), IQueryBuilder::PARAM_STR)
+				)
+			);
+			$cursor = $qb->execute();
+		}else{
+			$cursor = 0;
+		}
+
+		if($cursor || !empty($row))
+			if(!empty($row))
+				return new DataResponse((['message' => 'User exists!','status' => 201, 'data' => $row]), Http::STATUS_OK);
+			if($cursor)
+				return new DataResponse((['message' => 'User added!','status' => 200, 'data' => $cursor]), Http::STATUS_OK);
+		else
+			return new DataResponse((['message' => 'User does not added!','status' => 201, 'data' => 0]), Http::STATUS_OK);
 	}
 
 	
-	public function getRemoteUser(){
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function getRemoteUser($initiator){
 
+		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
+
+		$qb = $this->db->getQueryBuilder();
+
+        $qb->select('*')
+		->from('ocm_remote_users')
+		->where(
+			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR))
+		);
+
+        $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+
+		if(empty($row)){
+			return new DataResponse((['message' => 'User not found!','status' => 201, 'data' => '']), Http::STATUS_OK);
+		}else{
+			return new DataResponse((['message' => 'User found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+		}
+		
 	}
 
 
-    
+	/**
+	 * @NoCSRFRequired
+	 */
+	public function findRemoteUser($initiator){
+
+		$qb = $this->db->getQueryBuilder();
+
+        $qb->select('*')
+		->from('ocm_remote_users')
+		->where(
+			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
+		)
+		->andWhere(
+			$qb->expr()->orX(
+				$qb->expr()->like('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('display_name', $qb->createNamedParameter($this->request->getHeader('displayName'), IQueryBuilder::PARAM_STR))
+			)
+		);
+
+        $cursor = $qb->execute();
+        $row = $cursor->fetchAll();
+
+		if(empty($row)){
+			return new DataResponse((['message' => 'User not found!','status' => 200, 'data' => '']), Http::STATUS_OK);
+		}else{
+			return new DataResponse((['message' => 'User found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+		}
+		
+	}
 }
