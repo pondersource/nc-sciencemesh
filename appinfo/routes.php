@@ -97,7 +97,7 @@ $routes_array = [
 		["name" => "Api#tokens_list", "url" => "/api/v1/tokens_list/{initiator}", "verb" => "GET"],
 		["name" => "Api#add_remote_user", "url" => "/api/v1/add_remote_user/{initiator}", "verb" => "POST"],
 		["name" => "Api#get_remote_user", "url" => "/api/v1/get_remote_user/{initiator}", "verb" => "GET"],
-		["name" => "Api#find_remote_user", "url" => "/api/v1/find_remote_user/{initiator}", "verb" => "POST"]
+		["name" => "Api#find_remote_user", "url" => "/api/v1/find_remote_user/{initiator}", "verb" => "GET"]
 	
 	]
 ];

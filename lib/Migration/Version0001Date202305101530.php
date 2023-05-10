@@ -13,7 +13,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version0001Date202305041300 extends SimpleMigrationStep {
+class Version0001Date202305101530 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -38,7 +38,7 @@ class Version0001Date202305041300 extends SimpleMigrationStep {
 			$table->addColumn('id', 'integer', ['autoincrement' => true, 'notnull' => true]);
 			$table->addColumn('token', 'string', ['length' => 255, 'notnull' => true]);
 			$table->addColumn('initiator', 'string', ['length' => 255, 'notnull' => true]);
-			$table->addColumn('expiration', 'datetime');
+			$table->addColumn('expiration', 'string', ['length' => 255, 'notnull' => true]);
 			$table->addColumn('description', 'string', ['length' => 255, 'notnull' => true]);
 			$table->setPrimaryKey(['id']);
 		}
@@ -50,6 +50,7 @@ class Version0001Date202305041300 extends SimpleMigrationStep {
 			$table1->addColumn('opaque_user_id', 'string', ['length' => 255, 'notnull' => true]);
 			$table1->addColumn('idp', 'string', ['length' => 255, 'notnull' => true]);
 			$table1->addColumn('email', 'string', ['length' => 255, 'notnull' => true]);
+			$table1->addColumn('initiator', 'string', ['length' => 255, 'notnull' => true]);
 			$table1->addColumn('display_name', 'string', ['length' => 255, 'notnull' => true]);
 			$table1->setPrimaryKey(['id']);
 		}

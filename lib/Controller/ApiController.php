@@ -100,7 +100,7 @@ class ApiController extends Controller
 	public function addToken($initiator, $request){
 		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 
-		if(!$this->request->getHeader('tokenValue') and !$initiator and !$this->request->getHeader('expiry_date') and !$this->request->getHeader('description')){
+		if(!$this->request->getParam('token') and !$initiator and !$this->request->getParam('expiry_date') and !$this->request->getParam('description')){
 			return new DataResponse(['message' => 'values are not provided properly!','status' => 412, 'data' => null], Http::STATUS_OK);
 		}
 
@@ -112,7 +112,7 @@ class ApiController extends Controller
 			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getParam('token'), IQueryBuilder::PARAM_STR))
 		);
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
@@ -123,10 +123,10 @@ class ApiController extends Controller
 			$qb->insert('ocm_tokens')
 			->values(
 				array(
-					'token' => $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR),
+					'token' => $qb->createNamedParameter($this->request->getParam('token'), IQueryBuilder::PARAM_STR),
 					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
 					'expiration' => $qb->createNamedParameter($expiry_date, IQueryBuilder::PARAM_STR),
-					'description' => $qb->createNamedParameter($this->request->getHeader('description'), IQueryBuilder::PARAM_STR)
+					'description' => $qb->createNamedParameter($this->request->getParam('description'), IQueryBuilder::PARAM_STR)
 				)
 			);
 			$cursor = $qb->execute();
@@ -157,7 +157,7 @@ class ApiController extends Controller
 			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getHeader('tokenValue'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getParam('token'), IQueryBuilder::PARAM_STR))
 		);
 
         $cursor = $qb->execute();
@@ -200,7 +200,7 @@ class ApiController extends Controller
 
 		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 		
-		if(!$this->request->getHeader('opaqueUserId') and !$this->request->getHeader('idp') and !$this->request->getHeader('email') and !$this->request->getHeader('displayName')){
+		if(!$this->request->getParam('opaqueUserId') and !$this->request->getParam('idp') and !$this->request->getParam('email') and !$this->request->getParam('displayName')){
 			return new DataResponse((['message' => 'values are not provided properly!','status' => 412, 'data' => null]), Http::STATUS_OK);
 		}
 
@@ -210,13 +210,13 @@ class ApiController extends Controller
         $qb->select('*')
 		->from('ocm_remote_users')
 		->where(
-			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getParam('opaqueUserId'), IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getParam('idp'), IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getParam('email'), IQueryBuilder::PARAM_STR))
 		);
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
@@ -227,10 +227,10 @@ class ApiController extends Controller
 			->values(
 				array(
 					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
-					'opaque_user_id' => $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR),
-					'idp' => $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR),
-					'email' => $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR),
-					'display_name' => $qb->createNamedParameter($this->request->getHeader('displayName'), IQueryBuilder::PARAM_STR)
+					'opaque_user_id' => $qb->createNamedParameter($this->request->getParam('OpaqueUserID'), IQueryBuilder::PARAM_STR),
+					'idp' => $qb->createNamedParameter($this->request->getParam('idp'), IQueryBuilder::PARAM_STR),
+					'email' => $qb->createNamedParameter($this->request->getParam('email'), IQueryBuilder::PARAM_STR),
+					'display_name' => $qb->createNamedParameter($this->request->getParam('displayName'), IQueryBuilder::PARAM_STR)
 				)
 			);
 			$cursor = $qb->execute();
@@ -263,13 +263,13 @@ class ApiController extends Controller
 			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('idp', $qb->createNamedParameter($this->request->getParam('idp'), IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getParam('opaqueUserId'), IQueryBuilder::PARAM_STR))
 		)
 		->andWhere(
-			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR))
+			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getParam('email'), IQueryBuilder::PARAM_STR))
 		);
 
         $cursor = $qb->execute();
@@ -298,10 +298,10 @@ class ApiController extends Controller
 		)
 		->andWhere(
 			$qb->expr()->orX(
-				$qb->expr()->like('opaque_user_id', $qb->createNamedParameter($this->request->getHeader('opaqueUserId'), IQueryBuilder::PARAM_STR)),
-				$qb->expr()->like('idp', $qb->createNamedParameter($this->request->getHeader('idp'), IQueryBuilder::PARAM_STR)),
-				$qb->expr()->like('email', $qb->createNamedParameter($this->request->getHeader('email'), IQueryBuilder::PARAM_STR)),
-				$qb->expr()->like('display_name', $qb->createNamedParameter($this->request->getHeader('displayName'), IQueryBuilder::PARAM_STR))
+				$qb->expr()->like('opaque_user_id', $qb->createNamedParameter($this->request->getParam('search'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('idp', $qb->createNamedParameter($this->request->getParam('search'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('email', $qb->createNamedParameter($this->request->getParam('search'), IQueryBuilder::PARAM_STR)),
+				$qb->expr()->like('display_name', $qb->createNamedParameter($this->request->getParam('search'), IQueryBuilder::PARAM_STR))
 			)
 		);
 
