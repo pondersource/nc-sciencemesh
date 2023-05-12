@@ -264,9 +264,6 @@ class ApiController extends Controller
 		)
 		->andWhere(
 			$qb->expr()->eq('opaque_user_id', $qb->createNamedParameter($this->request->getParam('opaqueUserId'), IQueryBuilder::PARAM_STR))
-		)
-		->andWhere(
-			$qb->expr()->eq('email', $qb->createNamedParameter($this->request->getParam('email'), IQueryBuilder::PARAM_STR))
 		);
 
         $cursor = $qb->execute();
