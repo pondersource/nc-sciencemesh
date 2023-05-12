@@ -93,7 +93,7 @@ $routes_array = [
 		
 		// API Routes
 		["name" => "Api#add_token", "url" => "/api/v1/add_token/{initiator}", "verb" => "POST"],
-		["name" => "Api#get_token", "url" => "/api/v1/get_token/{initiator}", "verb" => "GET"],
+		["name" => "Api#get_token", "url" => "/api/v1/get_token", "verb" => "GET"],
 		["name" => "Api#tokens_list", "url" => "/api/v1/tokens_list/{initiator}", "verb" => "GET"],
 		["name" => "Api#add_remote_user", "url" => "/api/v1/add_remote_user/{initiator}", "verb" => "POST"],
 		["name" => "Api#get_remote_user", "url" => "/api/v1/get_remote_user/{initiator}", "verb" => "GET"],

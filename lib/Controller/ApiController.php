@@ -66,7 +66,7 @@ class ApiController extends Controller
     }
 
     /**
-     * Check if the request is authenticated by comparing the request's API key with the stored revaLoopbackSecret.
+     * Check if the request is authenticated by comparing the request's API key with the stored invite-manager-endpoint.
      *
      * @param IRequest $request
      * @return bool
@@ -81,7 +81,7 @@ class ApiController extends Controller
                 $qb->expr()->eq('appid', $qb->createNamedParameter('sciencemesh', IQueryBuilder::PARAM_STR))
             )
             ->andWhere(
-                $qb->expr()->eq('configkey', $qb->createNamedParameter('revaLoopbackSecret', IQueryBuilder::PARAM_STR))
+                $qb->expr()->eq('configkey', $qb->createNamedParameter('invite-manager-endpoint', IQueryBuilder::PARAM_STR))
             );
 
         $cursor = $qb->execute();
@@ -154,9 +154,6 @@ class ApiController extends Controller
         $qb->select('*')
 		->from('ocm_tokens')
 		->where(
-			$qb->expr()->eq('initiator', $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR))
-		)
-		->andWhere(
 			$qb->expr()->eq('token', $qb->createNamedParameter($this->request->getParam('token'), IQueryBuilder::PARAM_STR))
 		);
 
