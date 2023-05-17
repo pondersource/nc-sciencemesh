@@ -2,13 +2,14 @@
 
 namespace OCA\ScienceMesh\Controller;
 
+use Laminas\Diactoros\Response\TextResponse;
+use OCA\ScienceMesh\PlainResponse;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IURLGenerator;
 use OCP\IConfig;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\TextPlainResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
@@ -16,8 +17,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\IUserSession;
 use OCA\ScienceMesh\RevaHttpClient;
-use OCA\ScienceMesh\Plugins\ScienceMeshGenerateTokenPlugin;
-use OCA\ScienceMesh\Plugins\ScienceMeshAcceptTokenPlugin;
 
 class AppController extends Controller {
 	private $userId;
@@ -120,13 +119,13 @@ class AppController extends Controller {
 		$inviteLinkStr = $invitationsData["invite_link"];
 		$meshDirectoryUrl = $this->config->getAppValue('sciencemesh', 'meshDirectoryUrl', 'https://sciencemesh.cesnet.cz/iop/meshdir/');
     if (!$inviteLinkStr) {
-			return new TextPlainResponse("Unexpected response from Reva", Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new PlainResponse("Unexpected response from Reva", Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
     if (!$meshDirectoryUrl) {
-			return new TextPlainResponse("Unexpected mesh directory URL configuration", Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new PlainResponse("Unexpected mesh directory URL configuration", Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		return new TextPlainResponse("$meshDirectoryUrl$inviteLinkStr", Http::STATUS_OK);
+		return new PlainResponse("$meshDirectoryUrl$inviteLinkStr", Http::STATUS_OK);
 	}
 
 	/**
@@ -147,7 +146,7 @@ class AppController extends Controller {
 		$providerDomain = $this->request->getParam('providerDomain');
 		$token = $this->request->getParam('token');
 		$result = $this->httpClient->acceptInvite($providerDomain, $token, $this->userId);
-		return new TextPlainResponse($result, Http::STATUS_OK);
+		return new PlainResponse($result, Http::STATUS_OK);
 	}
 
 	/**
@@ -171,9 +170,6 @@ class AppController extends Controller {
 			$return_users = json_decode($find_users_json, false);
 		}
 		
-		return new TextPlainResponse(json_encode($return_users), Http::STATUS_OK);
+		return new PlainResponse(json_encode($return_users), Http::STATUS_OK);
 	}
-
-
-
 }

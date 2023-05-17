@@ -249,7 +249,7 @@ class SettingsController extends Controller
 		$this->serverConfig->setIopUrl($sciencemesh_iop_url);
 		$this->serverConfig->setRevaSharedSecret($sciencemesh_shared_secret);
 
-		return new TextPlainResponse(true, Http::STATUS_OK);
+		return new DataResponse(["status" => true]);
 	}
 
 	/**
@@ -264,7 +264,7 @@ class SettingsController extends Controller
 	public function checkConnectionSettings()
 	{
 		$revaHttpClient = new RevaHttpClient($this->sciencemeshConfig, false);
-		$response_sciencemesh_iop_url = json_decode(str_replace('\n', '', $revaHttpClient->ocmProvider()), true);
+		$response_sciencemesh_iop_url = json_decode(str_replace('\n', '', $revaHttpClient->ocmProvider($this->userId)), true);
 
 		return new JSONResponse($response_sciencemesh_iop_url);
 	}

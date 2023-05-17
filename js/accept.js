@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				if (result.hasOwnProperty('message')) {
 					let test = result.message;
 					element.innerHTML = test || 'Success';
+					jQuery(element).addClass('text-error');
 					$('#provider').hide();
 					$('#display_name').hide();
 				} else {

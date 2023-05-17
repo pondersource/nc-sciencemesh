@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function(event) {
     //Everything will be for working with contacts
     var baseUrl = OC.generateUrl('/apps/sciencemesh');
-    $('#test_error').hide(); 
+    $('#show_result').hide(); 
     $.ajax({
         url: baseUrl + '/contacts/users',
         type: 'GET',
         contentType: 'application/json',
     }).done(function (response) {
-        if(response == '' || response === false) {
+        if(response === '' || response === false) {
             var element = document.getElementById("show_result");
             element.innerHTML= `
                                 <tr class="app-content-list-item">
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 element.innerHTML = 'No Sciencemesh Connection';
             } else {
                 var element = document.getElementById("invitation-details");
-                element.innerHTML = `<div class="token-generator"><i class="fa-thin fa-square-check"></i><input type="text" value="${response}" onclick="get_token()" readonly name="meshtoken" class="generated-token-link"><span class="icon-clippy svg" id="share-token-btn"></span><h4 class="message-token" style="padding:8px 0;">New Token Generated!</h4></div>`;
+                element.innerHTML = `<div class="token-generator"><i class="fa-thin fa-square-check"></i><input type="text" value="${response}" readonly name="meshtoken" class="generated-token-link"><span class="icon-clippy svg" onclick="get_token()" id="share-token-btn"></span><h4 class="message-token" style="padding:8px 0;">New Token Generated!</h4></div>`;
                 $('#test').show();
                 var button = document.querySelector("#share-token-btn");
                 button.addEventListener("click", function() {
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         input.select();
         document.execCommand("copy");
     }
-      
+     
     
     function secondsToDhms(seconds) {
         seconds = Number(seconds);

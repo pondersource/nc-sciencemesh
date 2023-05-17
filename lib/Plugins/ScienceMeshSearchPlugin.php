@@ -2,28 +2,42 @@
 
 namespace OCA\ScienceMesh\Plugins;
 
-use OCP\Collaboration\Collaborators\ISearchPlugin;
-use OCP\Collaboration\Collaborators\ISearchResult;
-use OCP\Collaboration\Collaborators\SearchResultType;
+use OC\User\User;
 use OCP\IConfig;
-use OCP\Share\IShare;
+use OCP\Share;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCA\ScienceMesh\RevaHttpClient;
+use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
+use OCP\Contacts\IManager;
+use OCP\Util\UserSearch;
 
-class ScienceMeshSearchPlugin implements ISearchPlugin {
+class ScienceMeshSearchPlugin {
 	protected $shareeEnumeration;
+
+	/** @var IManager */
+	protected $contactsManager;
+
+	/** @var int */
+	protected $offset = 0;
+
+	/** @var int */
+	protected $limit = 10;
+
+	/** @var UserSearch*/
+	protected $userSearch;
+
 	/** @var IConfig */
 	private $config;
-	/** @var IUserManager */
-	private $userManager;
+
 	/** @var string */
 	private $userId = '';
 
-	public function __construct(IConfig $config, IUserManager $userManager, IUserSession $userSession) {
+	public function __construct(IManager $contactsManager, IConfig $config, IUserManager $userManager, IUserSession $userSession, UserSearch $userSearch) {
 		$this->config = $config;
-		$this->userManager = $userManager;
 		$user = $userSession->getUser();
+		$this->contactsManager = $contactsManager;
+		$this->userSearch = $userSearch;
 		if ($user !== null) {
 			$this->userId = $user->getUID();
 		}
@@ -34,12 +48,7 @@ class ScienceMeshSearchPlugin implements ISearchPlugin {
 	public function search($search, $limit, $offset, ISearchResult $searchResult) {
 		$users = json_decode($this->revaHttpClient->findAcceptedUsers($this->userId), true);
 
-		$users = array_filter($users, function ($user) use ($search) {
-			return (stripos($user['display_name'], $search) !== false);
-		});
-		$users = array_slice($users, $offset, $limit);
-
-		$exactResults = [];
+		$result = [];
 		foreach ($users as $user) {
 			$domain = (str_starts_with($user['id']['idp'], "http") ? parse_url($user['id']['idp'])["host"] : $user['id']['idp']);
 			$exactResults[] = [
@@ -55,13 +64,11 @@ class ScienceMeshSearchPlugin implements ISearchPlugin {
 			];
 		}
 
-		$result = [
-			'wide' => [],
-			'exact' => $exactResults
-		];
+		error_log("returning other results:");
+		error_log(var_export($otherResults, true));
 
-		$resultType = new SearchResultType('remotes');
-		$searchResult->addResultSet($resultType, $result['wide'], $result['exact']);
-		return true;
+		$result = array_merge($result, $otherResults);
+
+		return $result;
 	}
 }
