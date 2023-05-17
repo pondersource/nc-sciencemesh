@@ -16,11 +16,8 @@ namespace OCA\ScienceMesh\ShareProvider;
 use OC\Share20\Exception\InvalidShare;
 use OC\Share20\Share;
 use OCP\Constants;
-<<<<<<< HEAD
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudIdManager;
-=======
->>>>>>> dev-oc-10-take-2
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -30,10 +27,7 @@ use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 use OCA\ScienceMesh\RevaHttpClient;
-<<<<<<< HEAD
-=======
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
->>>>>>> dev-oc-10-take-2
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\Notifications;
 use OCA\FederatedFileSharing\TokenHandler;
@@ -53,40 +47,6 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 	 * DefaultShareProvider constructor.
 	 *
 	 * @param IDBConnection $connection
-<<<<<<< HEAD
-=======
-	 * @param EventDispatcherInterface $eventDispatcher
->>>>>>> dev-oc-10-take-2
-	 * @param AddressHandler $addressHandler
-	 * @param Notifications $notifications
-	 * @param TokenHandler $tokenHandler
-	 * @param IL10N $l10n
-	 * @param ILogger $logger
-	 * @param IRootFolder $rootFolder
-	 * @param IConfig $config
-	 * @param IUserManager $userManager
-<<<<<<< HEAD
-	 * @param ICloudIdManager $cloudIdManager
-	 * @param \OCP\GlobalScale\IConfig $globalScaleConfig
-	 * @param ICloudFederationProviderManager $cloudFederationProviderManager
-	 */
-	public function __construct(
-			IDBConnection $connection,
-			AddressHandler $addressHandler,
-			Notifications $notifications,
-			TokenHandler $tokenHandler,
-			IL10N $l10n,
-			ILogger $logger,
-			IRootFolder $rootFolder,
-			IConfig $config,
-			IUserManager $userManager,
-			ICloudIdManager $cloudIdManager,
-			\OCP\GlobalScale\IConfig $globalScaleConfig,
-			ICloudFederationProviderManager $cloudFederationProviderManager
-	) {
-		parent::__construct(
-			$connection,
-=======
 	 */
 	public function __construct(
 		IDBConnection $connection,
@@ -103,7 +63,7 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		parent::__construct(
 			$connection,
 			$eventDispatcher,
->>>>>>> dev-oc-10-take-2
+
 			$addressHandler,
 			$notifications,
 			$tokenHandler,
@@ -111,7 +71,6 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 			$logger,
 			$rootFolder,
 			$config,
-<<<<<<< HEAD
 			$userManager,
 			$cloudIdManager,
 			$globalScaleConfig,
@@ -120,13 +79,11 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 
 		$this->supportedShareType[] = IShare::TYPE_SCIENCEMESH;
 		$this->revaHttpClient = new RevaHttpClient($this->config);
-=======
 			$userManager
 		);
 
 		$this->supportedShareType[] = ScienceMeshApp::SHARE_TYPE_SCIENCEMESH;
 		$this->revaHttpClient = new RevaHttpClient($config);
->>>>>>> dev-oc-10-take-2
 	}
 
 	/**
@@ -158,7 +115,7 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 	 * @throws ShareNotFound
 	 * @throws \Exception
 	 */
-<<<<<<< HEAD
+
 	public function create(IShare $share) {
 		$node = $share->getNode();
 		$shareWith = $share->getSharedWith();
@@ -201,8 +158,7 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 	 * @throws ShareNotFound
 	 * @throws \Exception
 	 */
-=======
->>>>>>> dev-oc-10-take-2
+
 	public function createInternal(IShare $share) {
 		error_log("SMSP: createInternal");
 		$shareWith = $share->getSharedWith();
@@ -232,13 +188,7 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 
 		$share->setSharedWith($shareWith);
 		$shareId = $this->createScienceMeshShare($share);
-<<<<<<< HEAD
 		$data = $this->getRawShare($shareId);
-
-=======
-
-		$data = $this->getRawShare($shareId);
->>>>>>> dev-oc-10-take-2
 		return $this->createShareObject($data);
 	}
 	/**
