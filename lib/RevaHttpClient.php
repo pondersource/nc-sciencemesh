@@ -148,10 +148,10 @@ class RevaHttpClient {
 			'providerDomain' => $providerDomain,
 			'token' => $token
 		]);
-		return "Accepted invite";
+		return $empty;
 	}
 
-	public function generateTokenFromReva($userId) {
+	public function generateTokenFromReva($userId) {git
 		$tokenFromReva = $this->revaGet('sciencemesh/generate-invite', $userId);
 		error_log('Got token from reva!' . $tokenFromReva);
 		return json_decode($tokenFromReva, true);
