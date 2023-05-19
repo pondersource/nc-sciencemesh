@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(event) {
     //Everything will be for working with contacts
-<<<<<<< HEAD
     loadData("");
-
-=======
     var baseUrl = OC.generateUrl('/apps/sciencemesh');
     $('#test_error').hide(); 
     $.ajax({
@@ -63,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log(response)
         //alert('The token is invalid')
     });
->>>>>>> 1d385a8 (Deal with non-URL idp)
     document.getElementById('token-generator').onclick = function () {
         var baseUrl = OC.generateUrl('/apps/sciencemesh');
         $.ajax({
