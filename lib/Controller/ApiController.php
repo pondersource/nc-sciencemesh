@@ -66,7 +66,7 @@ class ApiController extends Controller
     }
 
     /**
-     * Check if the request is authenticated by comparing the request's API key with the stored invite-manager-endpoint.
+     * Check if the request is authenticated by comparing the request's API key with the stored inviteManagerApikey.
      *
      * @param IRequest $request
      * @return bool
@@ -81,12 +81,13 @@ class ApiController extends Controller
                 $qb->expr()->eq('appid', $qb->createNamedParameter('sciencemesh', IQueryBuilder::PARAM_STR))
             )
             ->andWhere(
-                $qb->expr()->eq('configkey', $qb->createNamedParameter('invite-manager-endpoint', IQueryBuilder::PARAM_STR))
+                $qb->expr()->eq('configkey', $qb->createNamedParameter('inviteManagerApikey', IQueryBuilder::PARAM_STR))
             );
 
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
-
+		error_log('HEREEEE!');
+		error_log('ANDD ' . $row[0]['configvalue'] . ' , ' . $this->request->getHeader('apikey'));
         if ($row[0]['configvalue'] == $this->request->getHeader('apikey')) {
             return true;
         } else {
@@ -98,6 +99,7 @@ class ApiController extends Controller
 	 * @NoCSRFRequired
 	 */
 	public function addToken($initiator, $request){
+		error_log("OUH HEREEEE ". json_encode($this->request));
 		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 
 		if(!$this->request->getParam('token') and !$initiator and !$this->request->getParam('expiry_date') and !$this->request->getParam('description')){
