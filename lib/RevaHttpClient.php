@@ -151,7 +151,7 @@ class RevaHttpClient {
 		return $empty;
 	}
 
-	public function generateTokenFromReva($userId) {git
+	public function generateTokenFromReva($userId) {
 		$tokenFromReva = $this->revaGet('sciencemesh/generate-invite', $userId);
 		error_log('Got token from reva!' . $tokenFromReva);
 		return json_decode($tokenFromReva, true);
