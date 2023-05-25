@@ -144,11 +144,11 @@ class RevaHttpClient {
 	}
 
 	public function acceptInvite($providerDomain, $token, $userId) {
-		$empty = $this->revaPost('sciencemesh/accept-invite', $userId, [
+		$accept_invite = $this->revaPost('sciencemesh/accept-invite', $userId, [
 			'providerDomain' => $providerDomain,
 			'token' => $token
 		]);
-		return $empty;
+		return $accept_invite;
 	}
 
 	public function generateTokenFromReva($userId) {
