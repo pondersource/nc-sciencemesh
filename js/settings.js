@@ -131,7 +131,7 @@
                     OC.Notification.show(message, {
                         type: "text-error",
                         timeout: 5000,
-                        duration: 1000
+                        duration: 10000
                     });
                 }
 
