@@ -68,6 +68,8 @@ class ApiController extends Controller
     /**
      * Check if the request is authenticated by comparing the request's API key with the stored inviteManagerApikey.
      *
+	 * 
+	 * @PublicPage
      * @param IRequest $request
      * @return bool
      */
@@ -86,9 +88,8 @@ class ApiController extends Controller
 
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
-		error_log('HEREEEE!');
-		error_log('ANDD ' . $row[0]['configvalue'] . ' , ' . $this->request->getHeader('apikey'));
-        if ($row[0]['configvalue'] == $this->request->getHeader('apikey')) {
+
+		if ($row[0]['configvalue'] == $this->request->getHeader('apikey')) {
             return true;
         } else {
             return false;
@@ -96,10 +97,11 @@ class ApiController extends Controller
     }
 	
 	/**
+	 * 
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function addToken($initiator, $request){
-		error_log("OUH HEREEEE ". json_encode($this->request));
 		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 
 		if(!$this->request->getParam('token') and !$initiator and !$this->request->getParam('expiry_date') and !$this->request->getParam('description')){
@@ -145,6 +147,7 @@ class ApiController extends Controller
 	}
 
 	/**
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function getToken($initiator){
@@ -172,6 +175,7 @@ class ApiController extends Controller
 
 	
 	/**
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function tokensList($initiator){
@@ -193,6 +197,7 @@ class ApiController extends Controller
 
 	
 	/**
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function addRemoteUser($initiator){
@@ -248,6 +253,7 @@ class ApiController extends Controller
 
 	
 	/**
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function getRemoteUser($initiator){
@@ -281,6 +287,7 @@ class ApiController extends Controller
 
 
 	/**
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function findRemoteUser($initiator){
