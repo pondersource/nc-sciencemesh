@@ -62,6 +62,7 @@ class ScienceMeshNotifier implements INotifier {
 	}
 
 	/**
+	 * @inheritdoc
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
@@ -69,9 +70,9 @@ class ScienceMeshNotifier implements INotifier {
 	 * @throws AlreadyProcessedException When the notification is not needed anymore and should be deleted
 	 */
 
-	public function prepare(INotification $notification, string $languageCode): INotification {
+	public function prepare(INotification $notification, $languageCode) {
 		if ($notification->getApp() !== 'sciencemesh') {
-			throw new \InvalidArgumentException('Unknown app');
+			throw new \InvalidArgumentExceptions('Unknown app');
 		}
 
 		switch ($notification->getSubject()) {
@@ -104,7 +105,6 @@ class ScienceMeshNotifier implements INotifier {
 							//	->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET'); // , ['id' => $notification->getObjectId()]), 'DELETE');
 							break;
 					}
-
 					$notification->addParsedAction($action);
 				}
 
