@@ -17,5 +17,4 @@ webpackConfig.output = {
     // },
 };
 
-
 module.exports = webpackConfig;
