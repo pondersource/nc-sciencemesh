@@ -7,3 +7,8 @@ tests/coverage
 cov.html/
 .php_cs.cache
 build/tools/composer.phar
+
+.idea
+*.iml
+node_modules/
+js/*hot-update.*

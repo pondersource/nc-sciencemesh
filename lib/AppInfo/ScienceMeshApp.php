@@ -40,5 +40,12 @@ class ScienceMeshApp extends App {
 
 		$notificationManager = $server->getNotificationManager();
 		$notificationManager->registerNotifierService(ScienceMeshNotifier::class);
+
+		// 
+		$eventDispatcher = $server->getEventDispatcher();
+
+		$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
+			\OCP\Util::addScript('sciencemesh', 'main');
+		});
 	}
 }

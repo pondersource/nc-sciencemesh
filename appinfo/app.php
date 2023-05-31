@@ -13,6 +13,4 @@ $eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function () {
 
     Util::addScript('sciencemesh', 'dataTransfer');
     Util::addStyle('sciencemesh', 'dataTransfer');
-
-    // Util::addScript('sciencemesh', 'alpine');
 });
