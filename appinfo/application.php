@@ -35,6 +35,8 @@ class Application extends App {
 		$rootFolder = $container->query("OCP\Files\IRootFolder");
 		$config = $container->query("OCP\IConfig");
 		$userManager = $container->query("OCP\IUserManager");
+		$iManager = $container->query("OCP\Notification\IManager");
+		$urlGenerator = $container->query("OCP\IURLGenerator");
 
 		return new ScienceMeshShareProvider(
 			$connection,
@@ -46,7 +48,8 @@ class Application extends App {
 			$logger,
 			$rootFolder,
 			$config,
-			$userManager
+			$userManager,
+			$iManager
 		);
 	}
 }

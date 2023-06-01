@@ -96,13 +96,13 @@ class ScienceMeshNotifier implements INotifier {
 					switch ($action->getLabel()) {
 						case 'accept':
 							$action->setParsedLabel("Accept")
-								->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
-							//	->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET'); // , ['id' => $notification->getObjectId()]), 'POST');
+							->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.storage.handlePost',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'POST'); // , ['id' => $notification->getObjectId()]), 'POST');
+							// ->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
 							break;
 						case 'decline':
 							$action->setParsedLabel("Decline")
-								->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
-							//	->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET'); // , ['id' => $notification->getObjectId()]), 'DELETE');
+							->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.storage.handleDelete',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'DELETE'); // , ['id' => $notification->getObjectId()]), 'DELETE');
+								// ->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
 							break;
 					}
 					$notification->addParsedAction($action);
