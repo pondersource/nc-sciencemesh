@@ -91,8 +91,10 @@ class ScienceMeshNotifier implements INotifier {
 //				$notification->setParsedMessage(json_encode($subjectParams));
 				$notification->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('notifications', 'notifications-dark.svg')));
 
+
 				// Deal with the actions for a known subject
 				foreach ($notification->getActions() as $action) {
+					error_log($action->getLabel());
 					switch ($action->getLabel()) {
 						case 'accept':
 							$action->setParsedLabel("Accept")

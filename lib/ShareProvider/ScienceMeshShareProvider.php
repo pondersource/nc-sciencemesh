@@ -32,7 +32,8 @@ use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\Notifications;
 use OCA\FederatedFileSharing\TokenHandler;
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
-use OCP\Notification\IManager;
+use OCP\IURLGenerator;
+use OCP\Notification\IManager as INotificationManager;
 
 /**
  * Class ScienceMeshShareProvider
@@ -48,7 +49,7 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 	 * @var IManager
 	 */
 	private $notificationManager;
-	private $urlGenerator;
+    private $urlGenerator;
 
 	/**
 	 * DefaultShareProvider constructor.
@@ -75,8 +76,9 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		IRootFolder $rootFolder,
 		IConfig $config,
 		IUserManager $userManager,
-		IManager $notificationManager
-	) {
+		INotificationManager $notificationManager,
+		IURLGenerator $urlGenerator
+		) {
 		parent::__construct(
 			$connection,
 			$eventDispatcher,
@@ -93,6 +95,8 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		$this->supportedShareType[] = ScienceMeshApp::SHARE_TYPE_SCIENCEMESH;
 		$this->revaHttpClient = new RevaHttpClient($config);
 		$this->notificationManager = $notificationManager;
+		$this->urlGenerator = $urlGenerator;
+
 	}
 
 	/**
@@ -307,23 +311,26 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		$id = $qb->getLastInsertId();
 
 
-		$manager = \OC::$server->getNotificationManager();
-		$notification = $manager->createNotification(); 
-		
-		$accept = $notification->createAction();
-		$accept = $accept->setLabel('accept');
-		$decline = $notification->createAction();
-		$decline = $accept->setLabel('decline');
+		$notification = $this->notificationManager->createNotification();
+
+		$acceptAction = $notification->createAction();
+		$acceptAction->setLabel('accept')
+		->setLink($this->urlGenerator->getAbsoluteURL('index.php/apps/files_sharing/api/externalShares',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'POST'); // , ['id' => $notification->getObjectId()]), 'POST');
+
+		$declineAction = $notification->createAction();
+		$declineAction->setLabel('decline')
+		->setLink($this->urlGenerator->linkToRouteAbsolute('files_sharing.externalShares.testRemote'), 'GET');
 
 		$notification->setApp('sciencemesh')
 			->setUser($shareData["user"])
 			->setDateTime(new DateTime())
 			->setObject('remote', $id) // $type and $id
-			->setSubject('remote_share', [$shareData["name"]])
-			->addAction($accept)
-			->addAction($decline); // $subject and $parameters
+			->setSubject('remote_share', ['Do you want to `'.$shareData["name"].'` shared with you?'])
+			->addAction($acceptAction)
+			->addAction($declineAction);
+			
 
-		$manager->notify($notification);
+		$this->notificationManager->notify($notification);
 
 		return (int)$id;
 	}

@@ -77,8 +77,7 @@ class AppController extends Controller {
 				->setObject('sciencemesh', dechex($time))
 				->setSubject('remote_share', [$shortMessage])
 				->addAction($acceptAction)
-				->addAction($declineAction)
-						;
+				->addAction($declineAction);
 			if ($longMessage !== '') {
 				$notification->setMessage('remote_share', [$longMessage]);
 			}
