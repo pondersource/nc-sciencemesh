@@ -43,6 +43,7 @@ $routes_array = [
 		['name' => 'reva#addSentShare', 'url' => '/~{userId}/api/ocm/addSentShare', 'verb' => 'POST'],
 		['name' => 'reva#addReceivedShare', 'url' => '/~{userId}/api/ocm/addReceivedShare', 'verb' => 'POST'],
 		['name' => 'reva#GetSentShare', 'url' => '/~{userId}/api/ocm/GetSentShare', 'verb' => 'POST'],
+		['name' => 'reva#GetSentShareByToken', 'url' => '/~nobody/api/ocm/GetSentShareByToken', 'verb' => 'POST'],
 		['name' => 'reva#Unshare', 'url' => '/~{userId}/api/ocm/Unshare', 'verb' => 'POST'],
 		['name' => 'reva#UpdateShare', 'url' => '/~{userId}/api/ocm/UpdateShare', 'verb' => 'POST'],
 		['name' => 'reva#ListSentShares', 'url' => '/~{userId}/api/ocm/ListSentShares', 'verb' => 'POST'],
@@ -77,8 +78,12 @@ $routes_array = [
 		['name' => 'app#contacts', 'url' => '/contacts', 'verb' => 'GET'],
 		['name' => 'app#settings', 'url' => '/settings', 'verb' => 'GET'],
 		['name' => 'app#invitationsGenerate', 'url' => '/invitations/generate', 'verb' => 'GET'],
+		['name' => 'app#invitationsSends', 'url' => '/invitations/emailsend', 'verb' => 'POST'],
 		['name' => 'app#contactsAccept', 'url' => '/contacts/accept', 'verb' => 'POST'],
 		['name' => 'app#contactsFindUsers', 'url' => '/contacts/users', 'verb' => 'GET'],
+
+		// contacts routes
+		['name' => 'contacts#deleteContact', 'url' => '/contact/deleteContact', 'verb' => 'POST'],
 
 		// page routes
 		['name' => 'page#get_internal_metrics', 'url' => '/internal_metrics', 'verb' => 'GET'],

@@ -273,6 +273,11 @@
    width: 45% !important;
    border-bottom: 1px solid #ececec;
 }
+.contacts-table tbody tr td:nth-child(4){
+   width: 5% !important;
+   border-bottom: 1px solid var(--color-placeholder-light);
+   text-align: center;
+}
 .contacts-profile-img{
    height: 35px;
    margin: 2.5px 0px;
@@ -370,7 +375,24 @@
    background-size: 20px !important;
    width: 30px;
 }
+
 #contact-search-input{
    margin-top: 20px;
    margin-left: 10px;
+}
+
+#recipient{
+   width: 25% !important;
+   border-radius: 3px !important;
+   height: 36px;
+}
+
+#oc-dialog-0-content #oc-dialog-0-content-input{
+   width: 95% !important;
+}
+
+#share-token-btn-email{
+   width: 30px;
+   background-size: 24px;
+   opacity: 0.5;
 }

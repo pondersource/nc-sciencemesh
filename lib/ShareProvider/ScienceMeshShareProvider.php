@@ -32,6 +32,7 @@ use OCA\FederatedFileSharing\Notifications;
 use OCA\FederatedFileSharing\TokenHandler;
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
 
+
 /**
  * Class ScienceMeshShareProvider
  *
@@ -147,6 +148,15 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		$data = $this->getRawShare($shareId);
 		return $this->createShareObject($data);
 	}
+
+	function endsWith( $string, $search ) {
+		$length = strlen( $search );
+		if( !$length ) {
+			return true;
+		}
+		return substr( $string, -$length ) === $search;
+	}
+
 	/**
 	 * Share a path
 	 *
@@ -158,31 +168,44 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 	public function create(IShare $share) {
 		$node = $share->getNode();
 		$shareWith = $share->getSharedWith();
-		$pathParts = explode("/", $node->getPath());
-		$sender = $pathParts[1];
-		$sourceOffset = 3;
-		$targetOffset = 3;
-		$prefix = "/";
-		$suffix = ($node->getType() == "dir" ? "/" : "");
+		$isScienecemeshUser = $this->endsWith($shareWith, ScienceMeshApp::SCIENCEMESH_POSTFIX);
 
-		// "home" is reva's default work space name, prepending that in the source path:
-		$sourcePath = $prefix . "home/" . implode("/", array_slice($pathParts, $sourceOffset)) . $suffix;
-		$targetPath = $prefix . implode("/", array_slice($pathParts, $targetOffset)) . $suffix;
-		$shareWithParts = explode("@", $shareWith);
-		$response = $this->revaHttpClient->createShare($sender, [
-			'sourcePath' => $sourcePath,
-			'targetPath' => $targetPath,
-			'type' => $node->getType(),
-			'recipientUsername' => $shareWithParts[0],
-			'recipientHost' => $shareWithParts[1]
-		]);
-		if (!isset($response) || !isset($response->share) || !isset($response->share->owner) || !isset($response->share->owner->idp)) {
-			throw new \Exception("Unexpected response from reva");
+		if ($isScienecemeshUser) {
+			$shareWith = str_replace(ScienceMeshApp::SCIENCEMESH_POSTFIX, "", $shareWith);
+
+			$pathParts = explode("/", $node->getPath());
+			$sender = $pathParts[1];
+			$sourceOffset = 3;
+			$targetOffset = 3;
+			$prefix = "/";
+			$suffix = ($node->getType() == "dir" ? "/" : "");
+
+			// "home" is reva's default work space name, prepending that in the source path:
+			$sourcePath = $prefix . "home/" . implode("/", array_slice($pathParts, $sourceOffset)) . $suffix;
+			$targetPath = $prefix . implode("/", array_slice($pathParts, $targetOffset)) . $suffix;
+			
+			$split_point = '@';
+			$parts = explode($split_point, $shareWith);
+			$last = array_pop($parts);
+			$shareWithParts = array(implode($split_point, $parts), $last);
+
+			$response = $this->revaHttpClient->createShare($sender, [
+				'sourcePath' => $sourcePath,
+				'targetPath' => $targetPath,
+				'type' => $node->getType(),
+				'recipientUsername' => $shareWithParts[0],
+				'recipientHost' => $shareWithParts[1]
+			]);
+			if (!isset($response) || !isset($response->share) || !isset($response->share->owner) || !isset($response->share->owner->idp)) {
+				throw new \Exception("Unexpected response from reva");
+			}
+			$share->setId("will-set-this-later");
+			$share->setProviderId($response->share->owner->idp);
+			$share->setShareTime(new \DateTime());
+		} else {
+			$share = parent::create($share);
 		}
-		$share->setId("will-set-this-later");
-		$share->setProviderId($response->share->owner->idp);
-		$share->setShareTime(new \DateTime());
-
+		
 		return $share;
 	}
 
@@ -283,7 +306,6 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		$accepted = 0; //pending
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->insert('share_external')
-			// ->setValue('share_type', $qb->createNamedParameter($share_type))
 			->setValue('remote', $qb->createNamedParameter($shareData["remote"]))
 			->setValue('remote_id', $qb->createNamedParameter(trim($shareData["remote_id"], '"')))
 			->setValue('share_token', $qb->createNamedParameter($shareData["share_token"]))
