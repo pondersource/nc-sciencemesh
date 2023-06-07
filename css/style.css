@@ -76,7 +76,7 @@
 #token-generator{
    color: var(--color-primary-element-text);
    cursor: pointer;
-   width: auto;
+   width: 22%;
    height: 36px;
    border-radius: 0.2em;
    border: 0;
@@ -269,6 +269,11 @@
    width: 45% !important;
    border-bottom: 1px solid var(--color-placeholder-light);
 }
+.contacts-table tbody tr td:nth-child(4){
+   width: 5% !important;
+   border-bottom: 1px solid var(--color-placeholder-light);
+   text-align: center;
+}
 .contacts-profile-img{
    height: 35px;
    margin: 2.5px 0px;
@@ -365,4 +370,13 @@
 #contact-search-input{
    margin-top: 20px;
    margin-left: 10px;
+}
+
+#recipient{
+   width: 25% !important;
+   border-radius: 4px !important;
+}
+
+#oc-dialog-0-content #oc-dialog-0-content-input{
+   width: 100% !important;
 }

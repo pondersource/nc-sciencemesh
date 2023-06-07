@@ -46,12 +46,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
                                 <td>
                                     <p class="username-provider">${username}@${provider}</p>
                                 </td>
+                                <td>
+                                    <button type="button" class="deleteContact" data-username="${username}" data-idp="${idp}">Unfriend</button>
+                                </td>
                             </tr>
                     `;
                 }
                 var element = document.getElementById("show_result");
                 element.innerHTML = result;
                 
+                var button = $(".deleteContact");
+                button.each(function( index , ele) {
+                    ele.addEventListener("click", function() {
+                        deleteContact($(this).data('idp'),$(this).data('username'));
+                    });
+                });
+
                 $('#show_result').show();
             }
         }
@@ -61,23 +71,71 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
     document.getElementById('token-generator').onclick = function () {
         var baseUrl = OC.generateUrl('/apps/sciencemesh');
+        var recipient = document.getElementById("recipient");
         $.ajax({
             url: baseUrl + '/invitations/generate',
             type: 'GET',
             contentType: 'application/json',
-            //data: JSON.stringify(note)
+            data: { 
+                email: recipient.value,
+            },
         }).done(function (response) {
             if (response === '' || response === false) {
                 var element = document.getElementById("invitation-details");
                 element.innerHTML = 'No Sciencemesh Connection';
             } else {
                 var element = document.getElementById("invitation-details");
-                element.innerHTML = `<div class="token-generator"><i class="fa-thin fa-square-check"></i><input type="text" value="${response}" onclick="get_token()" readonly name="meshtoken" class="generated-token-link"><span class="icon-clippy svg" id="share-token-btn"></span><h4 class="message-token" style="padding:8px 0;">New Token Generated!</h4></div>`;
+                element.innerHTML = `<div class="token-generator"><i class="fa-thin fa-square-check"></i><input type="text" value="${response}" onclick="get_token()" readonly name="meshtoken" class="generated-token-link"><span class="icon-clippy svg" id="share-token-btn"></span><span class="icon-mail svg" id="share-token-btn-email"></span><h4 class="message-token" style="padding:8px 0;">New Token Generated!</h4></div>`;
                 $('#test').show();
                 var button = document.querySelector("#share-token-btn");
                 button.addEventListener("click", function() {
                     copyToClipboard();
                 });
+                
+                var buttonEmail = document.querySelector("#share-token-btn-email");
+                buttonEmail.addEventListener("click", function() {
+                    OC.dialogs.prompt(
+                        '',
+                        'Share Token',
+                        function (result,input) {
+                            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (input !== null) {
+                                if(emailPattern.test(input)){
+                                    $.ajax({
+                                        url: 'invitations/emailsend',
+                                        method: 'POST',
+                                        data: { 
+                                            email: input,
+                                            token: document.querySelector("input[name='meshtoken']").value
+                                        },
+                                        success: function (response) {
+                                            if(response){
+                                                alert('Email sent successfully!');
+                                            }else{
+                                                alert('Email sent failed! Please check the configuration.');
+                                            }
+                                        },
+                                        error: function (xhr, status, error) {
+                                            alert('Email sent failed! Please check the configuration.');
+                                        }
+                                      });
+                                }else{
+                                    alert('Please input Email correctly!')
+                                }
+                            // var email = result.trim();
+                            
+                            }else{
+                                alert('Please input Email address!')
+                            }
+                        },
+                        '',
+                        'Please input the recipient email',
+                        '',
+                        ''
+                      );
+                      
+                });
+
             }
         }).fail(function (response, code) {
             alert('The token is invalid')
@@ -87,9 +145,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const searchInput = document.getElementById('contact-search-input');
     const inputHandler = function(e) {
         const value = e.target.value;
-        if(value.length > 0){
             loadData(value);
-        }
       }
       
       function debounce(callback, wait) {
@@ -147,13 +203,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 if(token.hasOwnProperty(tokenData)) {
                     console.log(tokenData);
                     if(tokenData === 'accepted_users') {
-                        let accepted_users = token.accepted_users
-                        var result = ''; 
-                        for(accept in accepted_users) {
-                            const displayName = accepted_users[accept].display_name;
-                            const username = accepted_users[accept].id.opaque_id;
-                            const idp = accepted_users[accept].id.idp;
-                            const provider = new URL(idp).host;
+                        let acceptedUsers = JSON.parse(response);
+                        let result = '';
+                        for(i in acceptedUsers) {
+                            var displayName = acceptedUsers[i].display_name;
+                            var username = acceptedUsers[i].id.opaque_id;
+                            var idp = acceptedUsers[i].id.idp;
+                            var provider =  (idp.startsWith("http") ? new URL(idp).host : idp);
                             result += `
                                     <tr>
                                         <td style="border-radius:100%">
@@ -163,14 +219,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
                                             <p class="displayname">${displayName}</p>
                                         </td>  
                                         <td>
-                                            <p class="username-provider">${username}</p>
+                                            <p class="username-provider">${username}@${provider}</p>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="deleteContact" data-username="${username}" data-idp="${idp}">Unfriend</button>
                                         </td>
                                     </tr>
                             `;
                         }
-
                         var element = document.getElementById("show_result");
                         element.innerHTML = result;
+
+                        var button = $(".deleteContact");
+                        button.each(function( index , ele) {
+                            ele.addEventListener("click", function() {
+                            deleteContact($(this).data('idp'),$(this).data('username'));
+                            });
+                        });
 
                         $('#show_result').show();
                     }else{
@@ -191,6 +256,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }).fail(function (response, code) {
             console.log(response)
             //alert('The token is invalid')
+        });
+    }
+    function deleteContact(idp,username){
+        var baseUrl = OC.generateUrl('/apps/sciencemesh');
+        var data = 'idp=' + encodeURIComponent(idp) + '&username=' + encodeURIComponent(username);
+        $.ajax({
+            url: baseUrl + '/contact/deleteContact',
+            type: 'POST',
+			contentType: 'application/x-www-form-urlencoded',
+            data:data
+        }).done(function (response) {
+            if (response === '' || response === false) {
+                console.log('failed');
+            }else{
+                console.log(response);
+            }
+        }).fail(function (response, code) {
+            alert('The token is invalid')
         });
     }
 });
