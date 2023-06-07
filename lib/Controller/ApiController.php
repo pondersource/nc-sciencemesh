@@ -104,7 +104,7 @@ class ApiController extends Controller
 	public function addToken($initiator, $request){
 		if(!$this->authentication($this->request)) return new DataResponse((['message' => 'Authentication failed!','status' => 412, 'data' => null]), Http::STATUS_INTERNAL_SERVER_ERROR);
 
-		if(!$this->request->getParam('token') and !$initiator and !$this->request->getParam('expiry_date') and !$this->request->getParam('description')){
+		if(!$this->request->getParam('token') and !$initiator and !$this->request->getParam('expiration') and !$this->request->getParam('description')){
 			return new DataResponse(['message' => 'values are not provided properly!','status' => 412, 'data' => null], Http::STATUS_OK);
 		}
 
@@ -121,7 +121,7 @@ class ApiController extends Controller
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 		
-		$expiry_date = isset($expiry_date) ? $expiry_date : time();
+		$expiration = $this->request->getParam('expiration');
 
 		if(empty($row)){
 			$qb->insert('ocm_tokens')
@@ -129,7 +129,7 @@ class ApiController extends Controller
 				array(
 					'token' => $qb->createNamedParameter($this->request->getParam('token'), IQueryBuilder::PARAM_STR),
 					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
-					'expiration' => $qb->createNamedParameter($expiry_date, IQueryBuilder::PARAM_STR),
+					'expiration' => $qb->createNamedParameter($expiration, IQueryBuilder::PARAM_STR),
 					'description' => $qb->createNamedParameter($this->request->getParam('description'), IQueryBuilder::PARAM_STR)
 				)
 			);
@@ -141,9 +141,9 @@ class ApiController extends Controller
 		if($cursor)
 			return new DataResponse((['message' => 'Token added!','status' => 200, 'data' => $cursor]), Http::STATUS_OK);
 		else if($cursor == 0)
-			return new DataResponse((['message' => 'Token already exists!','status' => 204, 'data' => 0]), Http::STATUS_OK);
+			return new DataResponse((['message' => 'Token already exists!','status' => 204, 'data' => 0]), Http::STATUS_BAD_REQUEST);
 		else
-			return new DataResponse((['message' => 'Token added failed!','status' => 400, 'data' => 0]), Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse((['message' => 'Token added failed!','status' => 400, 'data' => 0]), Http::STATUS_BAD_REQUEST);
 	}
 
 	/**
@@ -166,9 +166,9 @@ class ApiController extends Controller
         $row = $cursor->fetchAll();
 
 		if(empty($row)){
-			return new DataResponse((['message' => 'No Token found!','status' => 201, 'data' => '']), Http::STATUS_OK);
+			return new DataResponse((['message' => 'No Token found!','status' => 201, 'data' => '']), Http::STATUS_BAD_REQUEST);
 		}else{
-			return new DataResponse((['message' => 'Token found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+			return new DataResponse(($row[0]), Http::STATUS_OK);
 		}
 		
 	}
@@ -192,7 +192,7 @@ class ApiController extends Controller
 
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
-		return new DataResponse((['message' => 'Token listed!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+		return new DataResponse(($row), Http::STATUS_OK);
 	}
 
 	
@@ -225,13 +225,12 @@ class ApiController extends Controller
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 		
-
 		if(empty($row)){
 			$qb->insert('ocm_remote_users')
 			->values(
 				array(
 					'initiator' => $qb->createNamedParameter($initiator, IQueryBuilder::PARAM_STR),
-					'opaque_user_id' => $qb->createNamedParameter($this->request->getParam('OpaqueUserID'), IQueryBuilder::PARAM_STR),
+					'opaque_user_id' => $qb->createNamedParameter($this->request->getParam('opaqueUserId'), IQueryBuilder::PARAM_STR),
 					'idp' => $qb->createNamedParameter($this->request->getParam('idp'), IQueryBuilder::PARAM_STR),
 					'email' => $qb->createNamedParameter($this->request->getParam('email'), IQueryBuilder::PARAM_STR),
 					'display_name' => $qb->createNamedParameter($this->request->getParam('displayName'), IQueryBuilder::PARAM_STR)
@@ -244,11 +243,11 @@ class ApiController extends Controller
 
 		if($cursor || !empty($row))
 			if(!empty($row))
-				return new DataResponse((['message' => 'User exists!','status' => 201, 'data' => $row]), Http::STATUS_OK);
+				return new DataResponse((['message' => 'User exists!','status' => 400, 'data' => $row]), Http::STATUS_BAD_REQUEST);
 			if($cursor)
 				return new DataResponse((['message' => 'User added!','status' => 200, 'data' => $cursor]), Http::STATUS_OK);
 		else
-			return new DataResponse((['message' => 'User does not added!','status' => 201, 'data' => 0]), Http::STATUS_OK);
+			return new DataResponse((['message' => 'User does not added!','status' => 500, 'data' => 0]), Http::STATUS_INTERNAL_SERVER_ERROR);
 	}
 
 	
@@ -278,9 +277,9 @@ class ApiController extends Controller
         $row = $cursor->fetchAll();
 
 		if(empty($row)){
-			return new DataResponse((['message' => 'User not found!','status' => 201, 'data' => '']), Http::STATUS_OK);
+			return new DataResponse((['message' => 'User not found!','status' => 201, 'data' => '']), Http::STATUS_BAD_REQUEST);
 		}else{
-			return new DataResponse((['message' => 'User found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+			return new DataResponse(($this->CastToRevaUser($row[0])), Http::STATUS_OK);
 		}
 		
 	}
@@ -312,10 +311,23 @@ class ApiController extends Controller
         $row = $cursor->fetchAll();
 
 		if(empty($row)){
-			return new DataResponse((['message' => 'User not found!','status' => 200, 'data' => '']), Http::STATUS_OK);
+			return new DataResponse(([ ]), Http::STATUS_OK);
 		}else{
-			return new DataResponse((['message' => 'User found!','status' => 200, 'data' => $row]), Http::STATUS_OK);
+			$result = [];
+			foreach($row as $item){
+				$result[] = $this->CastToRevaUser($item);
+			}
+			return new DataResponse(($result), Http::STATUS_OK);
 		}
 		
+	}
+
+	private function CastToRevaUser($user){
+		return array(
+			'opaqueUserId' => $user['opaque_user_id'],
+			'idp' => $user['idp'],
+			'email' => $user['email'],
+			'displayName' => $user['display_name']
+		);
 	}
 }
