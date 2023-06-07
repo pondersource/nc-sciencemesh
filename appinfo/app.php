@@ -8,4 +8,5 @@ $eventDispatcher = \OC::$server->getEventDispatcher();
 $eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function(){
     Util::addScript('sciencemesh', 'open-with');
     Util::addStyle('sciencemesh', 'open-with');
+    Util::addScript('sciencemesh', 'dialog_fix');
 });
