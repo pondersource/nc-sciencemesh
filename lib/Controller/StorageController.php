@@ -42,7 +42,7 @@ class StorageController extends Controller {
 		$ch = curl_init();
 
 		curl_setopt_array($ch, array(
-			CURLOPT_URL => 'https://oc2.docker/index.php/apps/files_sharing/api/externalShares?id='.$id,
+			CURLOPT_URL => $_SERVER['HEADER_Origin'].'/index.php/apps/files_sharing/api/externalShares?id='.$id,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_MAXREDIRS => 10,
 			CURLOPT_TIMEOUT => 0,
@@ -80,7 +80,7 @@ class StorageController extends Controller {
 		$ch = curl_init();
 
 		curl_setopt_array($ch, array(
-			CURLOPT_URL => 'https://oc2.docker/index.php/apps/files_sharing/api/externalShares?id='.$id,
+			CURLOPT_URL => $_SERVER['HEADER_Origin'].'/index.php/apps/files_sharing/api/externalShares?id='.$id,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_MAXREDIRS => 10,
 			CURLOPT_TIMEOUT => 0,
