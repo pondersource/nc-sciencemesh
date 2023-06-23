@@ -33,12 +33,14 @@ class ScienceMeshNotifier implements INotifier {
 	/** @var IURLGenerator */
 	protected $urlGenerator;
 
+	protected $proccessedNotifications;
 	/**
 	 * @param IFactory $l10nFactory
 	 * @param IURLGenerator $urlGenerator
 	 */
 	public function __construct(IURLGenerator $urlGenerator) {
 		$this->urlGenerator = $urlGenerator;
+		$this->proccessedNotifications = array();
 	}
 
 	/**
@@ -62,6 +64,7 @@ class ScienceMeshNotifier implements INotifier {
 	}
 
 	/**
+	 * @inheritdoc
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
@@ -69,10 +72,16 @@ class ScienceMeshNotifier implements INotifier {
 	 * @throws AlreadyProcessedException When the notification is not needed anymore and should be deleted
 	 */
 
-	public function prepare(INotification $notification, string $languageCode): INotification {
+	public function prepare(INotification $notification, $languageCode) {
 		if ($notification->getApp() !== 'sciencemesh') {
-			throw new \InvalidArgumentException('Unknown app');
+			throw new \InvalidArgumentExceptions('Unknown app');
 		}
+		
+		if(in_array($notification->getObjectId(),$this->proccessedNotifications)){
+			throw new AlreadyProcessedException('Notification already proccesed');
+		}
+
+		$this->proccessedNotifications[] = $notification->getObjectId();
 
 		switch ($notification->getSubject()) {
 			// Deal with known subjects
@@ -90,21 +99,26 @@ class ScienceMeshNotifier implements INotifier {
 //				$notification->setParsedMessage(json_encode($subjectParams));
 				$notification->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('notifications', 'notifications-dark.svg')));
 
+
+				$acceptHandler = array();
 				// Deal with the actions for a known subject
 				foreach ($notification->getActions() as $action) {
 					switch ($action->getLabel()) {
 						case 'accept':
-							$action->setParsedLabel("Accept")
-								->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
-							//	->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET'); // , ['id' => $notification->getObjectId()]), 'POST');
+							if(in_array('accept',$acceptHandler)) break;
+							$acceptHandler[] = 'accept';
+							$action->setParsedLabel("Accept")->setPrimary(true)
+							->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.storage.handlePost',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'POST'); // , ['id' => $notification->getObjectId()]), 'POST');
+							// ->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
 							break;
 						case 'decline':
+							if(in_array('decline',$acceptHandler)) break;
+							$acceptHandler[] = 'decline';
 							$action->setParsedLabel("Decline")
-								->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
-							//	->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET'); // , ['id' => $notification->getObjectId()]), 'DELETE');
+							->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.storage.handleDelete',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'POST'); // , ['id' => $notification->getObjectId()]), 'POST');
+								// ->setLink($this->urlGenerator->linkToRouteAbsolute('sciencemesh.app.shared'), 'GET');
 							break;
 					}
-
 					$notification->addParsedAction($action);
 				}
 

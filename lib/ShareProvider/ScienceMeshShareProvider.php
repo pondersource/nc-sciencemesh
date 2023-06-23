@@ -14,6 +14,7 @@
 
 namespace OCA\ScienceMesh\ShareProvider;
 
+use DateTime;
 use OC\Share20\Exception\InvalidShare;
 use OC\Share20\Share;
 use OCP\Constants;
@@ -31,6 +32,8 @@ use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\Notifications;
 use OCA\FederatedFileSharing\TokenHandler;
 use OCA\ScienceMesh\AppInfo\ScienceMeshApp;
+use OCP\IURLGenerator;
+use OCP\Notification\IManager as INotificationManager;
 
 
 /**
@@ -42,6 +45,12 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 
 	/** @var RevaHttpClient */
 	protected $revaHttpClient;
+
+	/**
+	 * @var IManager
+	 */
+	private $notificationManager;
+    private $urlGenerator;
 
 	/**
 	 * DefaultShareProvider constructor.
@@ -67,8 +76,10 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		ILogger $logger,
 		IRootFolder $rootFolder,
 		IConfig $config,
-		IUserManager $userManager
-	) {
+		IUserManager $userManager,
+		INotificationManager $notificationManager,
+		IURLGenerator $urlGenerator
+		) {
 		parent::__construct(
 			$connection,
 			$eventDispatcher,
@@ -84,6 +95,9 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 
 		$this->supportedShareType[] = ScienceMeshApp::SHARE_TYPE_SCIENCEMESH;
 		$this->revaHttpClient = new RevaHttpClient($config);
+		$this->notificationManager = $notificationManager;
+		$this->urlGenerator = $urlGenerator;
+
 	}
 
 	/**
@@ -318,6 +332,28 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 			->setValue('accepted', $qb->createNamedParameter($accepted));
 		$qb->execute();
 		$id = $qb->getLastInsertId();
+
+
+		$notification = $this->notificationManager->createNotification();
+
+		$acceptAction = $notification->createAction();
+		$acceptAction->setLabel('accept')
+		->setLink($this->urlGenerator->getAbsoluteURL('index.php/apps/files_sharing/api/externalShares',['userId'=>$notification->getUser(),'path'=>$notification->getObjectId()]), 'POST'); // , ['id' => $notification->getObjectId()]), 'POST');
+
+		$declineAction = $notification->createAction();
+		$declineAction->setLabel('decline')
+		->setLink($this->urlGenerator->linkToRouteAbsolute('files_sharing.externalShares.testRemote'), 'GET');
+
+		$notification->setApp('sciencemesh')
+			->setUser($shareData["user"])
+			->setDateTime(new DateTime())
+			->setObject('remote', $id) // $type and $id
+			->setSubject('remote_share', ['Do you want to `'.$shareData["name"].'` shared with you?'])
+			->addAction($acceptAction)
+			->addAction($declineAction);
+			
+
+		$this->notificationManager->notify($notification);
 
 		return (int)$id;
 	}
@@ -643,5 +679,17 @@ class ScienceMeshShareProvider extends FederatedShareProviderCopy {
 		} else {
 			return  $this->createScienceMeshShare($shareData);
 		}
+	}
+
+	/**
+	 * @param int $remoteShare
+	 * @param int $userId
+	 */
+	public function processNotification($remoteShare, $usid) {
+		$filter = $this->notificationManager->createNotification();
+		$filter->setApp('files_sharing')
+			->setUser($usid)
+			->setObject('remote_share', (int) $remoteShare);
+		$this->notificationManager->markProcessed($filter);
 	}
 }

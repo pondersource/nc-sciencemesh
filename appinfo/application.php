@@ -5,6 +5,7 @@ namespace OCA\ScienceMesh\AppInfo;
 use OCA\ScienceMesh\ShareProvider\ScienceMeshShareProvider;
 use \OCP\AppFramework\App;
 use \OCA\ScienceMesh\Controller\PageController;
+use OCP\IURLGenerator;
 
 
 
@@ -35,6 +36,8 @@ class Application extends App {
 		$rootFolder = $container->query("OCP\Files\IRootFolder");
 		$config = $container->query("OCP\IConfig");
 		$userManager = $container->query("OCP\IUserManager");
+		$iManager = $container->query("OCP\Notification\IManager");
+		$iURLGenerator = $container->query("OCP\IURLGenerator");
 
 		return new ScienceMeshShareProvider(
 			$connection,
@@ -46,7 +49,9 @@ class Application extends App {
 			$logger,
 			$rootFolder,
 			$config,
-			$userManager
+			$userManager,
+			$iManager,
+			$iURLGenerator
 		);
 	}
 }
