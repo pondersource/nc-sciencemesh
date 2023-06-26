@@ -132,6 +132,7 @@ class RevaController extends Controller {
 		$this->userId = $userId;
 		$this->checkRevadAuth();
 		if ($userId) {
+			error_log("Getting user folder for '$userId'");
 			$this->userFolder = $this->rootFolder->getUserFolder($userId);
 		}
 	}
@@ -353,7 +354,11 @@ class RevaController extends Controller {
 	 */
 	public function AddGrant($userId) {
 		error_log("AddGrant");
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		// FIXME: Expected a param with a grant to add here;
@@ -380,7 +385,11 @@ class RevaController extends Controller {
 	 */
 	public function Authenticate($userId) {
 		error_log("Authenticate");
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$userId = $this->request->getParam("clientID");
 		$password = $this->request->getParam("clientSecret");
 
@@ -424,7 +433,11 @@ class RevaController extends Controller {
 	 */
 	public function CreateDir($userId) {
 		error_log("CreateDir");
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		try {
 			$this->userFolder->newFolder($path);
@@ -444,7 +457,11 @@ class RevaController extends Controller {
 	public function CreateHome($userId) {
 		error_log("CreateHome");
 		if (RESTRICT_TO_SCIENCEMESH_FOLDER) {
-			$this->init($userId);
+			if ($this->userManager->userExists($userId)) {
+				$this->init($userId);
+			} else {
+				return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+			}
 			$homeExists = $this->userFolder->nodeExists("sciencemesh");
 			if (!$homeExists) {
 				try {
@@ -467,7 +484,11 @@ class RevaController extends Controller {
 	public function CreateReference($userId) {
 		error_log("CreateReference");
 
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		return new JSONResponse("Not implemented", Http::STATUS_NOT_IMPLEMENTED);
 	}
@@ -532,8 +553,11 @@ class RevaController extends Controller {
 	 */
 	public function Delete($userId) {
 		error_log("Delete");
-
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		try {
 			$node = $this->userFolder->get($path);
@@ -552,7 +576,11 @@ class RevaController extends Controller {
 	 */
 	public function EmptyRecycle($userId) {
 		error_log("EmptyRecycle");
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$user = $this->userManager->get($userId);
 		$trashItems = $this->trashManager->listTrashRoot($user);
 
@@ -573,7 +601,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function GetMD($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$ref = $this->request->getParam("ref");
 		error_log("GetMD " . var_export($ref, true));
 		if (isset($ref["path"])) {
@@ -606,7 +638,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function GetPathByID($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		// in progress
 		$path = "subdir/";
 		$storageId = $this->request->getParam("storage_id");
@@ -623,7 +659,11 @@ class RevaController extends Controller {
 	public function InitiateUpload($userId) {
 		$ref = $this->request->getParam("ref");
 		$path = $this->revaPathToNextcloudPath((isset($ref["path"]) ? $ref["path"] : ""));
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$response = [
 			"simple" => $path
 		];
@@ -637,7 +677,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function ListFolder($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$ref = $this->request->getParam("ref");
 		$path = $this->revaPathToNextcloudPath((isset($ref["path"]) ? $ref["path"] : ""));
 		$success = $this->userFolder->nodeExists($path);
@@ -671,7 +715,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function ListRecycle($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$user = $this->userManager->get($userId);
 		$trashItems = $this->trashManager->listTrashRoot($user);
 		$result = [];
@@ -707,7 +755,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function ListRevisions($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		return new JSONResponse("Not implemented",Http::STATUS_NOT_IMPLEMENTED);
 	}
@@ -719,7 +771,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function RemoveGrant($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		// FIXME: Expected a grant to remove here;
 		return new JSONResponse("Not implemented", Http::STATUS_NOT_IMPLEMENTED);
@@ -732,7 +788,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function RestoreRecycleItem($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$key = $this->request->getParam("key");
 		$user = $this->userManager->get($userId);
 		$trashItems = $this->trashManager->listTrashRoot($user);
@@ -759,7 +819,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function RestoreRevision($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		// FIXME: Expected a revision param here;
 		return new JSONResponse("Not implemented", Http::STATUS_NOT_IMPLEMENTED);
@@ -772,7 +836,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function SetArbitraryMetadata($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		$metadata = $this->request->getParam("metadata");
 		// FIXME: What do we do with the existing metadata? Just toss it and overwrite with the new value? Or do we merge?
@@ -786,7 +854,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function UnsetArbitraryMetadata($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		return new JSONResponse("Not implemented", Http::STATUS_NOT_IMPLEMENTED);
 	}
@@ -798,7 +870,11 @@ class RevaController extends Controller {
 	 * @return Http\DataResponse|JSONResponse
 	 */
 	public function UpdateGrant($userId) {
-		$this->init($userId);
+		if ($this->userManager->userExists($userId)) {
+			$this->init($userId);
+		} else {
+			return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+		}
 		$path = $this->revaPathToNextcloudPath($this->request->getParam("path"));
 		// FIXME: Expected a paramater with the grant(s)
 		return new JSONResponse("Not implemented", Http::STATUS_NOT_IMPLEMENTED);
@@ -838,7 +914,11 @@ class RevaController extends Controller {
 		$revaPath = "/$path";
 		error_log("RevaController Upload! $userId $revaPath");
 		try {
-			$this->init($userId);
+			if ($this->userManager->userExists($userId)) {
+				$this->init($userId);
+			} else {
+				return new JSONResponse("User not found", Http::STATUS_FORBIDDEN);
+			}
 			$contents = $entityBody = file_get_contents('php://input');
 			// error_log("PUT body = " . var_export($contents, true));
 			error_log("Uploading! $revaPath");
