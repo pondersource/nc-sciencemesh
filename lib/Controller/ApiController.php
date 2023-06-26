@@ -89,7 +89,7 @@ class ApiController extends Controller
         $cursor = $qb->execute();
         $row = $cursor->fetchAll();
 
-		if ($row[0]['configvalue'] == $this->request->getHeader('apikey')) {
+		if ((count($row) > 0) and ($row[0]['configvalue'] == $this->request->getHeader('apikey'))) {
             return true;
         } else {
             return false;
