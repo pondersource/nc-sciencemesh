@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function(event) {
     //Everything will be for working with contacts
     var baseUrl = OC.generateUrl('/apps/sciencemesh');
+    loadData("");
+    $('#show_result').hide(); 
     $('#test_error').hide(); 
     $.ajax({
         url: baseUrl + '/contacts/users',
